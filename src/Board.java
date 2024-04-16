@@ -85,7 +85,6 @@ public class Board {
                 imageSelectedPanel.revalidate();
                 imageSelectedPanel.repaint();
                 imageSelect.add(imageSelectedPanel);
-
                 //JPanel imageAttackPanel = new JPanel();
                 //imageAttackList[squareNumber] = imageAttackPanel;
                 //imagePieces.add(imageAttackPanel);
@@ -101,17 +100,19 @@ public class Board {
                 squareButton.setVerticalAlignment(SwingConstants.TOP);
                 squareButton.setBorderPainted(false);
                 squareButton.setFocusPainted(false);
+                squareButton.setContentAreaFilled(false);
                 squareButton.setIconTextGap(0);
                 //sets button colors
                 if (white) {
-                    squareButton.setBackground(Constants.WHITE);
-                    squareButton.setForeground(Constants.BLACK);
+                //    squareButton.setBackground(Constants.WHITE);
+                //    squareButton.setForeground(Constants.BLACK);
                     white = false;
                 } else {
-                    squareButton.setBackground(Constants.BLACK);
-                    squareButton.setForeground(Constants.WHITE);
+                //    squareButton.setBackground(Constants.BLACK);
+                //    squareButton.setForeground(Constants.WHITE);
                     white = true;
                 }
+                squareButton.setOpaque(false);
                 gameBoardButtons.add(squareButton); //adds button to JPanel
 
                 int finalSquareNumber = squareNumber;
@@ -135,10 +136,11 @@ public class Board {
             }
             white = !white; //offsets every loop to create checkerboard pattern
         }
+        gameBoardButtons.setOpaque(false);
 
-        gameBoard.add(gameBoardButtons, 1);
+        gameBoard.add(gameBoardButtons, 0);
         //gameBoard.add(imagePieces, 2);
-        gameBoard.add(imageSelect, 0);
+        gameBoard.add(imageSelect, 1);
         //gameBoard.add(imageAttack, 0);
         //imagePieces.setOpaque(false);
         imageSelect.setOpaque(false);
