@@ -17,7 +17,7 @@ public class Board {
     Piece[] pieceList;
 
     JPanel[] imagePieceList = new JPanel[64];
-    JPanel[] imageSelectedList = new JPanel[64];
+    JPanel[] imageSelectList = new JPanel[64];
     JPanel[] imageAttackList = new JPanel[64];
 
     Square selectedSquare = null;
@@ -42,13 +42,13 @@ public class Board {
         gameBoard.setLayout(null);
         gameBoard.setBounds(0, 0, 800, 800);
         JPanel gameBoardButtons = new JPanel(new GridLayout(8, 8));
-        JPanel imagePieces = new JPanel(new GridLayout(8, 8));
+        JPanel imagePiece = new JPanel(new GridLayout(8, 8));
         JPanel imageSelect = new JPanel(new GridLayout(8, 8));
         JPanel imageAttack = new JPanel(new GridLayout(8, 8));
 
         setDimensions(gameBoard);
         setDimensions(gameBoardButtons);
-        setDimensions(imagePieces);
+        setDimensions(imagePiece);
         setDimensions(imageSelect);
         setDimensions(imageAttack);
 
@@ -61,34 +61,36 @@ public class Board {
                 Square square = new Square(s, n);
                 masterBoard[squareNumber] = square; //add square to board array
 
-
-                //JPanel imagePiecePanel = new JPanel();
-                //imagePieceList[squareNumber] = imagePiecePanel;
-                //imagePieces.add(imagePiecePanel);
-
-                BufferedImage I_select = null;
+                BufferedImage selectIMG = null;
+                BufferedImage attackIMG = null;
+                BufferedImage pieceIMG = null;
                 try {
-                    I_select = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/testing.png")));
+                    selectIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/select.png")));
+                    attackIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/attack.png")));
+                    pieceIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/piece.png")));
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                JPanel imageSelectedPanel = new JPanel(new GridLayout(1,1));
-                imageSelectedList[squareNumber] = imageSelectedPanel;
-                //imageSelectedPanel.setBounds(0, 0, 0, 0);
-                //imageSelectedPanel.setBackground(Constants.MEDIUMPINK);
-                JLabel picLabel = new JLabel();
-                //picLabel.setMinimumSize(new Dimension(0, 0)); //sets button size
-                //picLabel.setPreferredSize(new Dimension(0, 0)); //sets button size, both functions are needed
-                picLabel.setIcon(new ImageIcon(I_select));
-                imageSelectedPanel.add(picLabel);
-                //imageSelectedPanel.addMouseMotionListener( new MouseAdapter() { } );
-                imageSelectedPanel.revalidate();
-                imageSelectedPanel.repaint();
-                imageSelect.add(imageSelectedPanel);
-                //JPanel imageAttackPanel = new JPanel();
-                //imageAttackList[squareNumber] = imageAttackPanel;
-                //imagePieces.add(imageAttackPanel);
 
+                //JPanel imageSelectPanel = new JPanel(new GridLayout(1,1));
+                //imageSelectList[squareNumber] = imageSelectPanel;
+                //JLabel imageSelectLabel = new JLabel();
+                //imageSelectLabel.setIcon(new ImageIcon(selectIMG));
+                //imageSelectLabel.setOpaque(false);
+                //imageSelectPanel.setOpaque(false);
+                //imageSelectPanel.add(imageSelectLabel);
+                //imageSelectPanel.revalidate();
+                //imageSelectPanel.repaint();
+                //imageSelect.add(imageSelectPanel);
+
+                JPanel imageSelectPanel = setBoardPanels(imageSelect, selectIMG);
+                imageSelectList[squareNumber] = imageSelectPanel;
+
+                JPanel imageAttackPanel = setBoardPanels(imageAttack, attackIMG);
+                imageAttackList[squareNumber] = imageAttackPanel;
+
+                JPanel imagePiecePanel = setBoardPanels(imagePiece, pieceIMG);
+                imagePieceList[squareNumber] = imagePiecePanel;
 
 
                 JButton squareButton = square.getButton();
@@ -115,7 +117,6 @@ public class Board {
                 squareButton.setOpaque(false);
                 gameBoardButtons.add(squareButton); //adds button to JPanel
 
-                int finalSquareNumber = squareNumber;
                 squareButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -136,28 +137,21 @@ public class Board {
             }
             white = !white; //offsets every loop to create checkerboard pattern
         }
-        gameBoardButtons.setOpaque(false);
-
         gameBoard.add(gameBoardButtons, 0);
-        //gameBoard.add(imagePieces, 2);
         gameBoard.add(imageSelect, 1);
-        //gameBoard.add(imageAttack, 0);
-        //imagePieces.setOpaque(false);
+        gameBoard.add(imageAttack, 2);
+        gameBoard.add(imagePiece, 3);
+
+        gameBoardButtons.setOpaque(false);
+        imagePiece.setOpaque(false);
         imageSelect.setOpaque(false);
-        //imageAttack.setOpaque(false);
-        imageSelect.setBackground(Constants.LIGHTPINK);
-        //imageSelect.addMouseMotionListener( new MouseAdapter() { } );
-        //imageSelect.addActionListener(new ActionListener() {
-        //    @Override
-        //    public void actionPerformed(ActionEvent e) {
-        //
-        //    }
-        //});
+        imageAttack.setOpaque(false);
+        //imageSelect.setBackground(Constants.LIGHTPINK);
 
         gameBoardButtons.setBounds(0, 0, 800, 800);
-        //imagePieces.setBounds(0, 0, 800, 800);
         imageSelect.setBounds(0, 0, 800, 800);
-        //imageAttack.setBounds(0, 0, 800, 800);
+        imageAttack.setBounds(0, 0, 800, 800);
+        imagePiece.setBounds(0, 0, 800, 800);
 
         gameBoard.repaint();
         gameBoard.revalidate();
@@ -171,6 +165,19 @@ public class Board {
     public void setDimensions(JLayeredPane pane) {
         pane.setMinimumSize(new Dimension(800, 800)); //sets button size
         pane.setPreferredSize(new Dimension(800, 800)); //sets button size, both functions are needed
+    }
+
+    public JPanel setBoardPanels(JPanel panel, BufferedImage image) {
+        JPanel subPanel = new JPanel(new GridLayout(1,1));
+        JLabel subLabel = new JLabel();
+        subLabel.setIcon(new ImageIcon(image));
+        subLabel.setOpaque(false);
+        subPanel.setOpaque(false);
+        subPanel.add(subLabel);
+        subPanel.revalidate();
+        subPanel.repaint();
+        panel.add(subPanel);
+        return subPanel;
     }
 
     public void detectSquare(int col, int row) {
