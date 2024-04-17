@@ -1,4 +1,8 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 public class Constants {
 
@@ -15,4 +19,26 @@ public class Constants {
     public static final Color LIGHTPINK = new Color(186,123,201); //
     public static final Color WHITE = new Color(215,177,224); //
     public static final Color TRANSPARENT = new Color(0,0,0, 0); //
+
+    static BufferedImage selectIMG;
+
+    static {
+        try {
+            selectIMG = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/select.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static BufferedImage attackIMG = null;
+    static BufferedImage pieceIMG = null;
+    {
+        try {
+            selectIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/select.png")));
+            attackIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/attack.png")));
+            pieceIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/piece.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

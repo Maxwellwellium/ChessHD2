@@ -5,9 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -20,7 +18,12 @@ public class Board {
     JPanel[] imageSelectList = new JPanel[64];
     JPanel[] imageAttackList = new JPanel[64];
 
+    JLabel[] imagePieceLabels = new JLabel[64];
+    JLabel[] imageSelectLabels = new JLabel[64];
+    JLabel[] imageAttackLabels = new JLabel[64];
+
     Square selectedSquare = null;
+    int selectedSquareNumber = -1;
 
     public Square[] getMasterBoard() {
         return masterBoard;
@@ -52,7 +55,6 @@ public class Board {
         setDimensions(imageSelect);
         setDimensions(imageAttack);
 
-
         boolean white = true;
         int squareNumber = 0;
         for (int n : Constants.NUM_REVERSED) {
@@ -72,25 +74,14 @@ public class Board {
                     throw new RuntimeException(ex);
                 }
 
-                //JPanel imageSelectPanel = new JPanel(new GridLayout(1,1));
-                //imageSelectList[squareNumber] = imageSelectPanel;
-                //JLabel imageSelectLabel = new JLabel();
-                //imageSelectLabel.setIcon(new ImageIcon(selectIMG));
-                //imageSelectLabel.setOpaque(false);
-                //imageSelectPanel.setOpaque(false);
-                //imageSelectPanel.add(imageSelectLabel);
-                //imageSelectPanel.revalidate();
-                //imageSelectPanel.repaint();
-                //imageSelect.add(imageSelectPanel);
+                JLabel imageSelectLabel = setBoardPanels(imageSelect);
+                imageSelectLabels[squareNumber] = imageSelectLabel;
 
-                JPanel imageSelectPanel = setBoardPanels(imageSelect, selectIMG);
-                imageSelectList[squareNumber] = imageSelectPanel;
+                JLabel imageAttackLabel = setBoardPanels(imageAttack, attackIMG);
+                imageAttackLabels[squareNumber] = imageAttackLabel;
 
-                JPanel imageAttackPanel = setBoardPanels(imageAttack, attackIMG);
-                imageAttackList[squareNumber] = imageAttackPanel;
-
-                JPanel imagePiecePanel = setBoardPanels(imagePiece, pieceIMG);
-                imagePieceList[squareNumber] = imagePiecePanel;
+                JLabel imagePieceLabel = setBoardPanels(imagePiece, pieceIMG);
+                imagePieceLabels[squareNumber] = imagePieceLabel;
 
 
                 JButton squareButton = square.getButton();
@@ -117,6 +108,7 @@ public class Board {
                 squareButton.setOpaque(false);
                 gameBoardButtons.add(squareButton); //adds button to JPanel
 
+                int finalSquareNumber = squareNumber;
                 squareButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -129,7 +121,9 @@ public class Board {
                         }
                         square.printSquare();
 
+                        updateSelected(finalSquareNumber);
                         selectedSquare = square;
+                        selectedSquareNumber = finalSquareNumber;
 
                     }});
 
@@ -146,8 +140,6 @@ public class Board {
         imagePiece.setOpaque(false);
         imageSelect.setOpaque(false);
         imageAttack.setOpaque(false);
-        //imageSelect.setBackground(Constants.LIGHTPINK);
-
         gameBoardButtons.setBounds(0, 0, 800, 800);
         imageSelect.setBounds(0, 0, 800, 800);
         imageAttack.setBounds(0, 0, 800, 800);
@@ -167,7 +159,7 @@ public class Board {
         pane.setPreferredSize(new Dimension(800, 800)); //sets button size, both functions are needed
     }
 
-    public JPanel setBoardPanels(JPanel panel, BufferedImage image) {
+    public JLabel setBoardPanels(JPanel panel, BufferedImage image) {
         JPanel subPanel = new JPanel(new GridLayout(1,1));
         JLabel subLabel = new JLabel();
         subLabel.setIcon(new ImageIcon(image));
@@ -177,7 +169,52 @@ public class Board {
         subPanel.revalidate();
         subPanel.repaint();
         panel.add(subPanel);
-        return subPanel;
+        return subLabel;
+    }
+    public JLabel setBoardPanels(JPanel panel) {
+        JPanel subPanel = new JPanel(new GridLayout(1,1));
+        JLabel subLabel = new JLabel();
+        subLabel.setOpaque(false);
+        subPanel.setOpaque(false);
+        subPanel.add(subLabel);
+        subPanel.revalidate();
+        subPanel.repaint();
+        panel.add(subPanel);
+        return subLabel;
+    }
+    public JLabel setBoardPanels(JPanel panel, Color black, Color white) {
+        JPanel subPanel = new JPanel(new GridLayout(1,1));
+        JLabel subLabel = new JLabel();
+        subLabel.setOpaque(false);
+        subPanel.setOpaque(false);
+        subPanel.add(subLabel);
+        subPanel.revalidate();
+        subPanel.repaint();
+        panel.add(subPanel);
+        return subLabel;
+    }
+
+    public void clearIcons(JLabel[] list) {
+        for (JLabel label : list) {
+            label.setIcon(null);
+        }
+    }
+    public void updateSelected(int newSelectedNumber) {
+        if (newSelectedNumber == selectedSquareNumber) {
+            imageSelectLabels[selectedSquareNumber].setIcon(null);
+            selectedSquareNumber = -1;
+            System.out.println(selectedSquareNumber);
+            return;
+        }
+        if (selectedSquareNumber != -1) {
+            imageSelectLabels[selectedSquareNumber].setIcon(null);
+            System.out.println(selectedSquareNumber);
+        }
+        imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG));
+    }
+
+    public void updateBoardPanels(JPanel panel) {
+
     }
 
     public void detectSquare(int col, int row) {
