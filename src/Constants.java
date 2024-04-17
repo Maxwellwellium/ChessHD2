@@ -21,22 +21,14 @@ public class Constants {
     public static final Color TRANSPARENT = new Color(0,0,0, 0); //
 
     static BufferedImage selectIMG;
+    static BufferedImage attackIMG;
+    static BufferedImage pieceIMG;
 
     static {
         try {
             selectIMG = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/select.png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    static BufferedImage attackIMG = null;
-    static BufferedImage pieceIMG = null;
-    {
-        try {
-            selectIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/select.png")));
-            attackIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/attack.png")));
-            pieceIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/piece.png")));
+            attackIMG = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/attack.png")));
+            pieceIMG = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/piece.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

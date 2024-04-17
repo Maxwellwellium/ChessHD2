@@ -33,7 +33,7 @@ public class Board {
     }
     public void printMasterBoard() {
         for (Square square : masterBoard) {
-            square.printSquare();
+            square.printSquareInfo();
         }
     }
 
@@ -43,17 +43,18 @@ public class Board {
         //create the board panel and set its size
         JLayeredPane gameBoard = new JLayeredPane();
         gameBoard.setLayout(null);
-        gameBoard.setBounds(0, 0, 800, 800);
         JPanel gameBoardButtons = new JPanel(new GridLayout(8, 8));
-        JPanel imagePiece = new JPanel(new GridLayout(8, 8));
         JPanel imageSelect = new JPanel(new GridLayout(8, 8));
         JPanel imageAttack = new JPanel(new GridLayout(8, 8));
+        JPanel imagePiece = new JPanel(new GridLayout(8, 8));
+        JPanel checkerBoard = new JPanel(new GridLayout(8, 8));
 
-        setDimensions(gameBoard);
-        setDimensions(gameBoardButtons);
-        setDimensions(imagePiece);
-        setDimensions(imageSelect);
-        setDimensions(imageAttack);
+        setDimensions(gameBoard, 8);
+        setDimensions(gameBoardButtons, 8);
+        setDimensions(imageSelect, 8);
+        setDimensions(imageAttack, 8);
+        setDimensions(imagePiece, 8);
+        setDimensions(checkerBoard, 8);
 
         boolean white = true;
         int squareNumber = 0;
@@ -63,49 +64,31 @@ public class Board {
                 Square square = new Square(s, n);
                 masterBoard[squareNumber] = square; //add square to board array
 
-                BufferedImage selectIMG = null;
-                BufferedImage attackIMG = null;
-                BufferedImage pieceIMG = null;
-                try {
-                    selectIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/select.png")));
-                    attackIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/attack.png")));
-                    pieceIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/piece.png")));
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
 
                 JLabel imageSelectLabel = setBoardPanels(imageSelect);
                 imageSelectLabels[squareNumber] = imageSelectLabel;
 
-                JLabel imageAttackLabel = setBoardPanels(imageAttack, attackIMG);
+                JLabel imageAttackLabel = setBoardPanels(imageAttack, Constants.attackIMG);
                 imageAttackLabels[squareNumber] = imageAttackLabel;
 
-                JLabel imagePieceLabel = setBoardPanels(imagePiece, pieceIMG);
+                JLabel imagePieceLabel = setBoardPanels(imagePiece, Constants.pieceIMG);
                 imagePieceLabels[squareNumber] = imagePieceLabel;
 
+                white = setCheckerboard(checkerBoard, white, Constants.BLACK, Constants.WHITE);
 
                 JButton squareButton = square.getButton();
-                squareButton.setMinimumSize(new Dimension(100, 100)); //sets button size
-                squareButton.setPreferredSize(new Dimension(100, 100)); //sets button size, both functions are needed
+                setDimensions(squareButton, 1);
                 squareButton.setFont(new Font("Constantia", Font.PLAIN, 12)); //sets button font
                 squareButton.setText(square.getCol()+square.getRow()); //sets text to square's chess notation ID
+                squareButton.setForeground(Constants.MEDIUMPINK);
                 squareButton.setHorizontalAlignment(SwingConstants.LEFT); //aligns text to top left corner
                 squareButton.setVerticalAlignment(SwingConstants.TOP);
                 squareButton.setBorderPainted(false);
                 squareButton.setFocusPainted(false);
                 squareButton.setContentAreaFilled(false);
                 squareButton.setIconTextGap(0);
-                //sets button colors
-                if (white) {
-                //    squareButton.setBackground(Constants.WHITE);
-                //    squareButton.setForeground(Constants.BLACK);
-                    white = false;
-                } else {
-                //    squareButton.setBackground(Constants.BLACK);
-                //    squareButton.setForeground(Constants.WHITE);
-                    white = true;
-                }
-                squareButton.setOpaque(false);
+
+
                 gameBoardButtons.add(squareButton); //adds button to JPanel
 
                 int finalSquareNumber = squareNumber;
@@ -119,12 +102,8 @@ public class Board {
                         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                             throw new RuntimeException(ex);
                         }
-                        square.printSquare();
 
-                        updateSelected(finalSquareNumber);
-                        selectedSquare = square;
-                        selectedSquareNumber = finalSquareNumber;
-
+                        updateSelected(finalSquareNumber, square);
                     }});
 
                 squareNumber += 1;
@@ -135,30 +114,10 @@ public class Board {
         gameBoard.add(imageSelect, 1);
         gameBoard.add(imageAttack, 2);
         gameBoard.add(imagePiece, 3);
-
-        gameBoardButtons.setOpaque(false);
-        imagePiece.setOpaque(false);
-        imageSelect.setOpaque(false);
-        imageAttack.setOpaque(false);
-        gameBoardButtons.setBounds(0, 0, 800, 800);
-        imageSelect.setBounds(0, 0, 800, 800);
-        imageAttack.setBounds(0, 0, 800, 800);
-        imagePiece.setBounds(0, 0, 800, 800);
-
-        gameBoard.repaint();
-        gameBoard.revalidate();
+        gameBoard.add(checkerBoard, 4);
 
         return gameBoard;
     }
-    public void setDimensions(JPanel panel) {
-        panel.setMinimumSize(new Dimension(800, 800)); //sets button size
-        panel.setPreferredSize(new Dimension(800, 800)); //sets button size, both functions are needed
-    }
-    public void setDimensions(JLayeredPane pane) {
-        pane.setMinimumSize(new Dimension(800, 800)); //sets button size
-        pane.setPreferredSize(new Dimension(800, 800)); //sets button size, both functions are needed
-    }
-
     public JLabel setBoardPanels(JPanel panel, BufferedImage image) {
         JPanel subPanel = new JPanel(new GridLayout(1,1));
         JLabel subLabel = new JLabel();
@@ -182,16 +141,19 @@ public class Board {
         panel.add(subPanel);
         return subLabel;
     }
-    public JLabel setBoardPanels(JPanel panel, Color black, Color white) {
+    public boolean setCheckerboard(JPanel panel, boolean color, Color black, Color white) {
         JPanel subPanel = new JPanel(new GridLayout(1,1));
-        JLabel subLabel = new JLabel();
-        subLabel.setOpaque(false);
-        subPanel.setOpaque(false);
-        subPanel.add(subLabel);
-        subPanel.revalidate();
-        subPanel.repaint();
+        if (color) {
+            subPanel.setBackground(white);
+            subPanel.setForeground(black);
+            color = false;
+        } else {
+            subPanel.setBackground(black);
+            subPanel.setForeground(white);
+            color = true;
+        }
         panel.add(subPanel);
-        return subLabel;
+        return color;
     }
 
     public void clearIcons(JLabel[] list) {
@@ -199,25 +161,37 @@ public class Board {
             label.setIcon(null);
         }
     }
-    public void updateSelected(int newSelectedNumber) {
+    public void updateSelected(int newSelectedNumber, Square square) {
+        //if the same square is clicked multiple times, toggle whether it's selected or not
         if (newSelectedNumber == selectedSquareNumber) {
-            imageSelectLabels[selectedSquareNumber].setIcon(null);
-            selectedSquareNumber = -1;
-            System.out.println(selectedSquareNumber);
+            if (selectedSquareNumber != -1) {
+                imageSelectLabels[selectedSquareNumber].setIcon(null); //reset icon
+                selectedSquareNumber = -1; //reset selected square number
+                selectedSquare = null; //deselect square
+                System.out.println("no selected square");
+            } else {
+                imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
+                selectedSquare = square; //update variables
+                selectedSquareNumber = newSelectedNumber; //update variables
+                System.out.println("Selected " +selectedSquare.col+selectedSquare.row);
+            }
             return;
         }
+        //if different square is clicked, make it the new selected square
         if (selectedSquareNumber != -1) {
-            imageSelectLabels[selectedSquareNumber].setIcon(null);
-            System.out.println(selectedSquareNumber);
+            imageSelectLabels[selectedSquareNumber].setIcon(null); //reset icon
         }
-        imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG));
+        imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
+        selectedSquare = square; //update variables
+        selectedSquareNumber = newSelectedNumber; //update variables
+        System.out.println("Selected " +selectedSquare.col+selectedSquare.row);
     }
-
-    public void updateBoardPanels(JPanel panel) {
-
-    }
-
-    public void detectSquare(int col, int row) {
-
+    public void setDimensions(JComponent component, int factor) {
+        component.setMinimumSize(new Dimension(factor * 100, factor * 100)); //sets button size
+        component.setPreferredSize(new Dimension(factor * 100, factor * 100)); //sets button size, both functions are needed
+        component.setOpaque(false); //makes component transparent
+        if (!(component instanceof JButton)) {
+            component.setBounds(0, 0, 800, 800);
+        }
     }
 }

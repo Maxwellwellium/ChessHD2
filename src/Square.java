@@ -45,11 +45,14 @@ public class Square {
         this.piece = piece;
     }
 
-    public void printSquare() {
+    public void printSquareInfo() {
         if (this.piece != null) {
             System.out.println(this.piece+" at "+this.col+this.row);
         } else {
             System.out.println("No Piece at "+this.col+this.row);
         }
+    }
+    public void printSquare() {
+        System.out.println(this.col+this.row);
     }
 }

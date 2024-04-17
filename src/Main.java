@@ -340,7 +340,7 @@ public class Main extends JFrame{
         screenMain.setBackground(Constants.BLACK);
         add(screenMain);
         //////////////////////////////////////////////////////////////////////////
-        board.printMasterBoard();
+        //board.printMasterBoard();
 
     }
 
