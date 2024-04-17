@@ -64,33 +64,17 @@ public class Board {
                 Square square = new Square(s, n);
                 masterBoard[squareNumber] = square; //add square to board array
 
-
                 JLabel imageSelectLabel = setBoardPanels(imageSelect);
                 imageSelectLabels[squareNumber] = imageSelectLabel;
-
                 JLabel imageAttackLabel = setBoardPanels(imageAttack, Constants.attackIMG);
                 imageAttackLabels[squareNumber] = imageAttackLabel;
-
                 JLabel imagePieceLabel = setBoardPanels(imagePiece, Constants.pieceIMG);
                 imagePieceLabels[squareNumber] = imagePieceLabel;
 
                 white = setCheckerboard(checkerBoard, white, Constants.BLACK, Constants.WHITE);
 
-                JButton squareButton = square.getButton();
-                setDimensions(squareButton, 1);
-                squareButton.setFont(new Font("Constantia", Font.PLAIN, 12)); //sets button font
-                squareButton.setText(square.getCol()+square.getRow()); //sets text to square's chess notation ID
-                squareButton.setForeground(Constants.MEDIUMPINK);
-                squareButton.setHorizontalAlignment(SwingConstants.LEFT); //aligns text to top left corner
-                squareButton.setVerticalAlignment(SwingConstants.TOP);
-                squareButton.setBorderPainted(false);
-                squareButton.setFocusPainted(false);
-                squareButton.setContentAreaFilled(false);
-                squareButton.setIconTextGap(0);
-
-
+                JButton squareButton = setButton(square);
                 gameBoardButtons.add(squareButton); //adds button to JPanel
-
                 int finalSquareNumber = squareNumber;
                 squareButton.addActionListener(new ActionListener() {
                     @Override
@@ -103,20 +87,33 @@ public class Board {
                             throw new RuntimeException(ex);
                         }
 
-                        updateSelected(finalSquareNumber, square);
+                        updateSelected(finalSquareNumber, square); // update the selected square
                     }});
-
                 squareNumber += 1;
             }
             white = !white; //offsets every loop to create checkerboard pattern
         }
+        //add all JPanels as layers to the gameBoard layered pane. smallest index is put above higher indexed layers
         gameBoard.add(gameBoardButtons, 0);
         gameBoard.add(imageSelect, 1);
         gameBoard.add(imageAttack, 2);
         gameBoard.add(imagePiece, 3);
         gameBoard.add(checkerBoard, 4);
-
         return gameBoard;
+    }
+    public JButton setButton(Square square) {
+        JButton squareButton = square.getButton();
+        setDimensions(squareButton, 1);
+        squareButton.setFont(new Font("Constantia", Font.PLAIN, 12)); //sets button font
+        squareButton.setText(square.getCol()+square.getRow()); //sets text to square's chess notation ID
+        squareButton.setForeground(Constants.MEDIUMPINK);
+        squareButton.setHorizontalAlignment(SwingConstants.LEFT); //aligns text to top left corner
+        squareButton.setVerticalAlignment(SwingConstants.TOP);
+        squareButton.setBorderPainted(false);
+        squareButton.setFocusPainted(false);
+        squareButton.setContentAreaFilled(false);
+        squareButton.setIconTextGap(0);
+        return squareButton;
     }
     public JLabel setBoardPanels(JPanel panel, BufferedImage image) {
         JPanel subPanel = new JPanel(new GridLayout(1,1));
@@ -155,7 +152,6 @@ public class Board {
         panel.add(subPanel);
         return color;
     }
-
     public void clearIcons(JLabel[] list) {
         for (JLabel label : list) {
             label.setIcon(null);
