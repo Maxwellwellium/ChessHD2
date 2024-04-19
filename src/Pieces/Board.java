@@ -1,4 +1,7 @@
-import javax.imageio.ImageIO;
+package Pieces;
+
+import Pieces.*;
+
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
@@ -8,7 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Vector;
 
 public class Board {
     Square[] masterBoard = new Square[64];
@@ -22,6 +25,7 @@ public class Board {
     JLabel[] imageAttackLabels = new JLabel[64];
 
     Square selectedSquare = null;
+    Piece selectedPiece = null;
     int selectedSquareNumber = -1;
 
     public Square[] getMasterBoard() {
@@ -65,7 +69,7 @@ public class Board {
 
                 JLabel imageSelectLabel = setBoardPanels(imageSelect);
                 imageSelectLabels[squareNumber] = imageSelectLabel;
-                JLabel imageAttackLabel = setBoardPanels(imageAttack, Constants.attackIMG);
+                JLabel imageAttackLabel = setBoardPanels(imageAttack);
                 imageAttackLabels[squareNumber] = imageAttackLabel;
                 JLabel imagePieceLabel = setBoardPanels(imagePiece);
                 imagePieceLabels[squareNumber] = imagePieceLabel;
@@ -100,19 +104,81 @@ public class Board {
         gameBoard.add(checkerBoard, 4);
         return gameBoard;
     }
+    public void determineInput(String string) throws IOException {
+        char[] inputs = string.toCharArray();
 
-    public void spawnPiece(String col, int row) {
-        int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
-        System.out.println("alphaoffset" + alphaOffset);
-        System.out.println("Constants.NUM_REVERSED[row]" + Constants.NUM_REVERSED[row-1]);
-        int masterIndex = (Constants.NUM_REVERSED[row-1] * 8) - 8 + alphaOffset;
-        System.out.println("masterIndex" + masterIndex);
+        if (string.length() == 3) {
+            if (!(Arrays.asList(Constants.PIECES).contains(String.valueOf(inputs[0])))) {
+                System.out.println("Pieces.Piece Not Recognized!");
+                return;
+            }
+            if (!(Arrays.asList(Constants.ALPHA).contains(String.valueOf(inputs[1])))) {
+                System.out.println("Not a Valid File!");
+                return;
+            }
+            if (!(Arrays.asList(Constants.NUMSTRING).contains(String.valueOf(inputs[2])))) {
+                System.out.println("Not a Valid Rank!");
+                return;
+            }
+            System.out.println("Placing Pieces.Piece at coords");
 
-        Piece piece = new Piece(true, masterBoard[masterIndex]);
+            spawnPiece(String.valueOf(inputs[0]), String.valueOf(inputs[1]), Integer.parseInt(String.valueOf(inputs[2])));
+        }
+    }
+    public void spawnPiece(String type, String col, int row) throws IOException {
+        int masterIndex = coordsToIndex(col, row);
+
+        Piece piece = switch (type) {
+            case "a", "A" -> new Amazon(true, masterBoard[masterIndex]);
+            case "b", "B" -> new Bishop(true, masterBoard[masterIndex]);
+            case "c", "C" -> new Camel(true, masterBoard[masterIndex]);
+            case "e", "E" -> new Cameleater(true, masterBoard[masterIndex]);
+            case "k", "K" -> new King(true, masterBoard[masterIndex]);
+            case "n", "N" -> new Knight(true, masterBoard[masterIndex]);
+            case "p", "P" -> new Pawn(true, masterBoard[masterIndex]);
+            case "q", "Q" -> new Queen(true, masterBoard[masterIndex]);
+            case "r", "R" -> new Rook(true, masterBoard[masterIndex]);
+            case null, default -> new Brine(true, masterBoard[masterIndex]);
+        };
+
+        boolean spawned = checkSpawnSquare(piece, masterIndex);
+
         masterBoard[masterIndex].setPiece(piece); //in future check if piece is here
 
         imagePieceLabels[masterIndex].setIcon(new ImageIcon(Constants.pieceIMG)); // store img differently to refer to dynamically
-        System.out.println("piece created successfully at index " + masterIndex);
+        System.out.println(piece.getClass() +" created successfully at index " + masterIndex);
+    }
+
+    public boolean checkSpawnSquare(Piece piece, int masterIndex) {
+        if (masterBoard[masterIndex].getPiece() != null) {
+            if (masterBoard[masterIndex].getPiece().getClass() == piece.getClass()) {
+                //delete the piece if exists on square
+                masterBoard[masterIndex].setPiece(null);
+                imagePieceLabels[masterIndex].setIcon(null);
+                return false;
+            }
+            //override previous piece
+            //masterBoard[masterIndex].setPiece(piece);
+        }
+        masterBoard[masterIndex].setPiece(piece);
+        return true;
+    }
+
+    public int coordsToIndex(String col, int row) {
+        int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
+        return (Constants.NUM_REVERSED[row-1] * 8) - 8 + alphaOffset;
+    }
+    public int coordsToIndex(String col, String row) {
+        int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
+        return (Constants.NUM_REVERSED[Integer.parseInt(row)-1] * 8) - 8 + alphaOffset;
+    }
+    public Vector<Object> indexToCoords(int index) {
+        int row = Math.floorDiv(index, 8);
+        String col = Constants.ALPHA[index % 8];
+        Vector<Object> coords = new Vector<>(2);
+        coords.add(col);
+        coords.add(row);
+        return coords;
     }
     public JButton setButton(Square square) {
         JButton squareButton = square.getButton();

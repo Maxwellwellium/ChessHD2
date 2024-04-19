@@ -1,9 +1,11 @@
+package Pieces;
+
 import java.awt.image.BufferedImage;
 
 public class Piece {
     boolean moved = false;
     boolean white;
-    BufferedImage image;
+    BufferedImage image = Constants.pieceIMG;
     Square square;
 
     public Piece(boolean white, Square square) {

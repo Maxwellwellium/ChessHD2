@@ -1,3 +1,8 @@
+import Pieces.Board;
+import Pieces.Constants;
+import Pieces.Piece;
+import Pieces.SoundPlayer;
+
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -11,28 +16,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Random;
-import java.util.Vector;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.sound.sampled.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.stream.IntStream;
 
 
 public class Main extends JFrame{
@@ -110,8 +100,8 @@ public class Main extends JFrame{
         JButton pauseQuit_button = new JButton("Quit Game"); //quits application
 
         JButton gameBack_button = new JButton("Settings"); //sends player to pause screen
-        JButton gameGenNew_button = new JButton("Generate Blank Board"); //generates a new blank chess board
-        JButton gameGenReg_button = new JButton("Generate Chess Board"); //generates a new regular chess board
+        JButton gameGenNew_button = new JButton("Generate Blank Pieces.Board"); //generates a new blank chess board
+        JButton gameGenReg_button = new JButton("Generate Chess Pieces.Board"); //generates a new regular chess board
 
         JFormattedTextField gameEnterPiece = new JFormattedTextField();
 
@@ -130,7 +120,13 @@ public class Main extends JFrame{
         universalButtonSetup(gameGenReg_button, gameButtons);
         universalButtonSetup(gameBack_button, gameButtons);
 
-        addChangeListener(gameEnterPiece, e -> determineInput(board, gameEnterPiece.getText()));
+        addChangeListener(gameEnterPiece, e -> {
+            try {
+                board.determineInput(gameEnterPiece.getText());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         // mainNew_Button
         mainNew_button.addActionListener(new ActionListener() {
@@ -386,27 +382,6 @@ public class Main extends JFrame{
         panel.add(component, constraint); //adds button to panel
     }
 
-    public void determineInput(Board board, String string) {
-        char[] inputs = string.toCharArray();
-
-        if (string.length() == 3) {
-            if (!(Arrays.asList(Constants.PIECES).contains(String.valueOf(inputs[0])))) {
-                System.out.println("Piece Not Recognized!");
-                return;
-            }
-            if (!(Arrays.asList(Constants.ALPHA).contains(String.valueOf(inputs[1])))) {
-                System.out.println("Not a Valid File!");
-                return;
-            }
-            //if (!(Arrays.asList(Constants.NUMSTRING).contains(String.valueOf(inputs[2])))) {
-            //    System.out.println("Not a Valid Rank!");
-            //    return;
-            //}
-            System.out.println("Placing Piece at coords");
-
-            board.spawnPiece(String.valueOf(inputs[1]), Integer.parseInt(String.valueOf(inputs[2])));
-        }
-    }
 
     //addChangeListener made by Boann @ Stackoverflow (https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield)
     public static void addChangeListener(JTextField text, ChangeListener changeListener) {

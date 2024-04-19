@@ -1,3 +1,5 @@
+package Pieces;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,7 +26,18 @@ public class Constants {
 
     static BufferedImage selectIMG;
     static BufferedImage attackIMG;
-    static BufferedImage pieceIMG;
+    static BufferedImage pieceIMG; //temp
+
+    static BufferedImage amazonIMG;
+    static BufferedImage bishopIMG;
+    static BufferedImage brineIMG;
+    static BufferedImage camelIMG;
+    static BufferedImage cameleaterIMG;
+    static BufferedImage kingIMG;
+    static BufferedImage knightIMG;
+    static BufferedImage pawnIMG;
+    static BufferedImage queenIMG;
+    static BufferedImage rookIMG;
 
     static {
         try {

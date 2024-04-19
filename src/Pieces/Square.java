@@ -1,3 +1,7 @@
+package Pieces;
+
+import Pieces.Piece;
+
 import javax.swing.*;
 
 public class Square {
@@ -55,7 +59,7 @@ public class Square {
         if (this.piece != null) {
             System.out.println(this.piece+" at "+this.col+this.row);
         } else {
-            System.out.println("No Piece at "+this.col+this.row);
+            System.out.println("No Pieces.Piece at "+this.col+this.row);
         }
     }
     public void printSquare() {
