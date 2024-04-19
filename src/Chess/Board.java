@@ -1,6 +1,4 @@
-package Pieces;
-
-import Pieces.*;
+package Chess;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -109,7 +107,7 @@ public class Board {
 
         if (string.length() == 3) {
             if (!(Arrays.asList(Constants.PIECES).contains(String.valueOf(inputs[0])))) {
-                System.out.println("Pieces.Piece Not Recognized!");
+                System.out.println("Piece Not Recognized!");
                 return;
             }
             if (!(Arrays.asList(Constants.ALPHA).contains(String.valueOf(inputs[1])))) {
@@ -120,7 +118,7 @@ public class Board {
                 System.out.println("Not a Valid Rank!");
                 return;
             }
-            System.out.println("Placing Pieces.Piece at coords");
+            System.out.println("Placing piece at coords");
 
             spawnPiece(String.valueOf(inputs[0]), String.valueOf(inputs[1]), Integer.parseInt(String.valueOf(inputs[2])));
         }
@@ -145,7 +143,7 @@ public class Board {
 
         masterBoard[masterIndex].setPiece(piece); //in future check if piece is here
 
-        imagePieceLabels[masterIndex].setIcon(new ImageIcon(Constants.pieceIMG)); // store img differently to refer to dynamically
+        imagePieceLabels[masterIndex].setIcon(new ImageIcon(piece.getImage())); // store img differently to refer to dynamically
         System.out.println(piece.getClass() +" created successfully at index " + masterIndex);
     }
 

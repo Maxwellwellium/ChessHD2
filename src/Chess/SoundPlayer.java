@@ -1,4 +1,4 @@
-package Pieces;
+package Chess;
 
 import javax.sound.sampled.*;
 import java.io.IOException;

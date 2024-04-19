@@ -1,4 +1,4 @@
-package Pieces;
+package Chess;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

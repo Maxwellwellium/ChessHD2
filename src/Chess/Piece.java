@@ -1,17 +1,17 @@
-package Pieces;
+package Chess;
 
 import java.awt.image.BufferedImage;
 
 public class Piece {
-    boolean moved = false;
+    boolean moved;
     boolean white;
-    BufferedImage image = Constants.pieceIMG;
+    BufferedImage image;
     Square square;
 
     public Piece(boolean white, Square square) {
         this.white = white; //determines image used
         this.square = square; //determines col & row
-
+        this.moved = false;
     }
 
     public boolean isMoved() {

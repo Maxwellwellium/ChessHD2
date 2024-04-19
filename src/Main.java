@@ -1,7 +1,7 @@
-import Pieces.Board;
-import Pieces.Constants;
-import Pieces.Piece;
-import Pieces.SoundPlayer;
+import Chess.Board;
+import Chess.Constants;
+import Chess.Piece;
+import Chess.SoundPlayer;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;

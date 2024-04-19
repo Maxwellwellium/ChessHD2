@@ -1,6 +1,4 @@
-package Pieces;
-
-import Pieces.Piece;
+package Chess;
 
 import javax.swing.*;
 
