@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class Board {
@@ -66,7 +67,7 @@ public class Board {
                 imageSelectLabels[squareNumber] = imageSelectLabel;
                 JLabel imageAttackLabel = setBoardPanels(imageAttack, Constants.attackIMG);
                 imageAttackLabels[squareNumber] = imageAttackLabel;
-                JLabel imagePieceLabel = setBoardPanels(imagePiece, Constants.pieceIMG);
+                JLabel imagePieceLabel = setBoardPanels(imagePiece);
                 imagePieceLabels[squareNumber] = imagePieceLabel;
 
                 white = setCheckerboard(checkerBoard, white, Constants.BLACK, Constants.WHITE);
@@ -98,6 +99,20 @@ public class Board {
         gameBoard.add(imagePiece, 3);
         gameBoard.add(checkerBoard, 4);
         return gameBoard;
+    }
+
+    public void spawnPiece(String col, int row) {
+        int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
+        System.out.println("alphaoffset" + alphaOffset);
+        System.out.println("Constants.NUM_REVERSED[row]" + Constants.NUM_REVERSED[row-1]);
+        int masterIndex = (Constants.NUM_REVERSED[row-1] * 8) - 8 + alphaOffset;
+        System.out.println("masterIndex" + masterIndex);
+
+        Piece piece = new Piece(true, masterBoard[masterIndex]);
+        masterBoard[masterIndex].setPiece(piece); //in future check if piece is here
+
+        imagePieceLabels[masterIndex].setIcon(new ImageIcon(Constants.pieceIMG)); // store img differently to refer to dynamically
+        System.out.println("piece created successfully at index " + masterIndex);
     }
     public JButton setButton(Square square) {
         JButton squareButton = square.getButton();

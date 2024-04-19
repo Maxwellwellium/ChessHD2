@@ -12,6 +12,12 @@ public class Square {
         this.row = row;
         this.piece = null;
     }
+    public Square(String col, String row) {
+        this.button = new JButton();
+        this.col = col;
+        this.row = Integer.parseInt(row);
+        this.piece = null;
+    }
 
     public JButton getButton() {
         return button;

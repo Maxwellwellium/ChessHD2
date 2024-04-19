@@ -37,6 +37,7 @@ import java.util.stream.IntStream;
 
 public class Main extends JFrame{
 
+    Piece[] pieceList;
 
     public Main() throws IOException {
         // GENERAL GUI PARAMETERS
@@ -129,7 +130,7 @@ public class Main extends JFrame{
         universalButtonSetup(gameGenReg_button, gameButtons);
         universalButtonSetup(gameBack_button, gameButtons);
 
-        addChangeListener(gameEnterPiece, e -> determineInput(gameEnterPiece.getText()));
+        addChangeListener(gameEnterPiece, e -> determineInput(board, gameEnterPiece.getText()));
 
         // mainNew_Button
         mainNew_button.addActionListener(new ActionListener() {
@@ -385,7 +386,7 @@ public class Main extends JFrame{
         panel.add(component, constraint); //adds button to panel
     }
 
-    public void determineInput(String string) {
+    public void determineInput(Board board, String string) {
         char[] inputs = string.toCharArray();
 
         if (string.length() == 3) {
@@ -397,11 +398,13 @@ public class Main extends JFrame{
                 System.out.println("Not a Valid File!");
                 return;
             }
-            if (!(Arrays.asList(Constants.NUMSTRING).contains(String.valueOf(inputs[2])))) {
-                System.out.println("Not a Valid Rank!");
-                return;
-            }
+            //if (!(Arrays.asList(Constants.NUMSTRING).contains(String.valueOf(inputs[2])))) {
+            //    System.out.println("Not a Valid Rank!");
+            //    return;
+            //}
             System.out.println("Placing Piece at coords");
+
+            board.spawnPiece(String.valueOf(inputs[1]), Integer.parseInt(String.valueOf(inputs[2])));
         }
     }
 

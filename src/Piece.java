@@ -1,7 +1,6 @@
 import java.awt.image.BufferedImage;
 
 public class Piece {
-    Piece[] pieceList;
     boolean moved = false;
     boolean white;
     BufferedImage image;
