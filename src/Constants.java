@@ -6,10 +6,12 @@ import java.util.Objects;
 
 public class Constants {
 
+    public static final String[] PIECES = {"a", "b", "c", "e", "i", "k", "n", "p", "q", "r"};
     public static final String[] ALPHA = {"a", "b", "c", "d", "e", "f", "g", "h"};
     public static final String[] ALPHA_REVERSED = {"h", "g", "f", "e", "d", "c", "b", "a"};
     public static final int[] NUM = {1, 2, 3, 4, 5, 6, 7, 8};
     public static final int[] NUM_REVERSED = {8, 7, 6, 5, 4, 3, 2, 1};
+    public static final String[] NUMSTRING = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
     public static final Color BLACK = new Color(2,8,38); //;
     public static final Color DARKPURPLE = new Color(5,17,85); //

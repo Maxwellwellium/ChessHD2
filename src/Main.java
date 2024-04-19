@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,8 +27,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.stream.IntStream;
 
 
 public class Main extends JFrame{
@@ -107,6 +112,8 @@ public class Main extends JFrame{
         JButton gameGenNew_button = new JButton("Generate Blank Board"); //generates a new blank chess board
         JButton gameGenReg_button = new JButton("Generate Chess Board"); //generates a new regular chess board
 
+        JFormattedTextField gameEnterPiece = new JFormattedTextField();
+
 
         universalButtonSetup(mainNew_button, mainButtons);
         universalButtonSetup(mainResume_button, mainButtons);
@@ -117,9 +124,12 @@ public class Main extends JFrame{
         pauseBackGame_button.setEnabled(false); //starts unselected
         universalButtonSetup(pauseBackMenu_button, pauseButtons);
         universalButtonSetup(pauseQuit_button, pauseButtons);
-        universalButtonSetup(gameBack_button, gameButtons);
+        universalButtonSetup(gameEnterPiece, gameButtons);
         universalButtonSetup(gameGenNew_button, gameButtons);
         universalButtonSetup(gameGenReg_button, gameButtons);
+        universalButtonSetup(gameBack_button, gameButtons);
+
+        addChangeListener(gameEnterPiece, e -> determineInput(gameEnterPiece.getText()));
 
         // mainNew_Button
         mainNew_button.addActionListener(new ActionListener() {
@@ -134,7 +144,7 @@ public class Main extends JFrame{
 
                 //function that resets board for future
 
-                getContentPane().removeAll();
+                remove(screenMain);
                 add(screenGame);
                 revalidate();
                 repaint();
@@ -156,7 +166,7 @@ public class Main extends JFrame{
                     throw new RuntimeException(ex);
                 }
 
-                getContentPane().removeAll();
+                remove(screenMain);
                 add(screenGame);
                 revalidate();
                 repaint();
@@ -174,7 +184,7 @@ public class Main extends JFrame{
                     throw new RuntimeException(ex);
                 }
 
-                getContentPane().removeAll();
+                remove(screenMain);
                 add(screenPause);
                 revalidate();
                 repaint();
@@ -208,7 +218,7 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-                getContentPane().removeAll();
+                remove(screenPause);
                 add(screenGame);
                 revalidate();
                 repaint();
@@ -225,7 +235,7 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-                getContentPane().removeAll();
+                remove(screenPause);
                 add(screenMain);
                 revalidate();
                 repaint();
@@ -259,7 +269,7 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-                getContentPane().removeAll();
+                remove(screenGame);
                 add(screenPause);
                 revalidate();
                 repaint();
@@ -298,17 +308,32 @@ public class Main extends JFrame{
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 int keyCode = e.getKeyCode();
-                if ((keyCode == KeyEvent.VK_ESCAPE) && (!screenPause.isVisible())) {
-                    // bring up pause menu when esc is pressed
+                // bring up pause menu when esc is pressed
+                if (keyCode == KeyEvent.VK_ESCAPE) {
                     // Play Sound
                     try {
                         soundPlayer.playSound("Assets/menuSwitch.wav", false);
                     } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                         throw new RuntimeException(ex);
                     }
+                    //stores whether last screen was the game or the menu
+                    boolean prevScreenGame = Arrays.asList(getContentPane().getComponents()).contains(screenGame);
 
-                    getContentPane().removeAll();
-                    add(screenPause);
+                    if (!(Arrays.asList(getContentPane().getComponents()).contains(screenPause))) {
+                        if (prevScreenGame) {
+                            remove(screenGame);
+                        } else {
+                            remove(screenMain);
+                        }
+                        add(screenPause); // show pause screen
+                    } else {
+                        remove(screenPause);
+                        if (prevScreenGame) {
+                            add(screenGame);
+                        } else {
+                            add(screenMain);
+                        }
+                    }
                     revalidate();
                     repaint();
                 }
@@ -344,18 +369,79 @@ public class Main extends JFrame{
 
     }
 
-    public void universalButtonSetup(JButton button, JPanel panel) {
-        button.setBackground(Constants.DARKPURPLE); //sets button background color
-        button.setForeground(Constants.WHITE); //set button font color
-        button.setPreferredSize(new Dimension(300, 80)); //sets button size
-        button.setFont(new Font("Constantia", Font.BOLD, 30)); //sets button font
+    public void universalButtonSetup(JComponent component, JPanel panel) {
+        component.setBackground(Constants.DARKPURPLE); //sets button background color
+        component.setForeground(Constants.WHITE); //set button font color
+        component.setMinimumSize(new Dimension(350, 80));
+        component.setMaximumSize(new Dimension(350, 80));
+        component.setPreferredSize(new Dimension(350, 80)); //sets button size
+        component.setFont(new Font("Constantia", Font.BOLD, 30)); //sets button font
 
         //sets button placement constraints within button JPanel
         GridBagConstraints constraint = new GridBagConstraints();
         constraint.gridx = 0; //button placement aligned with leftmost column
         constraint.gridy = GridBagConstraints.RELATIVE; //button placement aligned underneath previous button
         constraint.insets = new Insets(15, 0, 0, 0); //padding between button
-        panel.add(button, constraint); //adds button to panel
+        panel.add(component, constraint); //adds button to panel
+    }
+
+    public void determineInput(String string) {
+        char[] inputs = string.toCharArray();
+
+        if (string.length() == 3) {
+            if (!(Arrays.asList(Constants.PIECES).contains(String.valueOf(inputs[0])))) {
+                System.out.println("Piece Not Recognized!");
+                return;
+            }
+            if (!(Arrays.asList(Constants.ALPHA).contains(String.valueOf(inputs[1])))) {
+                System.out.println("Not a Valid File!");
+                return;
+            }
+            if (!(Arrays.asList(Constants.NUMSTRING).contains(String.valueOf(inputs[2])))) {
+                System.out.println("Not a Valid Rank!");
+                return;
+            }
+            System.out.println("Placing Piece at coords");
+        }
+    }
+
+    //addChangeListener made by Boann @ Stackoverflow (https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield)
+    public static void addChangeListener(JTextField text, ChangeListener changeListener) {
+        Objects.requireNonNull(text);
+        Objects.requireNonNull(changeListener);
+        DocumentListener dl = new DocumentListener() {
+            private int lastChange = 0, lastNotifiedChange = 0;
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                lastChange++;
+                SwingUtilities.invokeLater(() -> {
+                    if (lastNotifiedChange != lastChange) {
+                        lastNotifiedChange = lastChange;
+                        changeListener.stateChanged(new ChangeEvent(text));
+                    }
+                });
+            }
+        };
+        text.addPropertyChangeListener("document", (PropertyChangeEvent e) -> {
+            Document d1 = (Document)e.getOldValue();
+            Document d2 = (Document)e.getNewValue();
+            if (d1 != null) d1.removeDocumentListener(dl);
+            if (d2 != null) d2.addDocumentListener(dl);
+            dl.changedUpdate(null);
+        });
+        Document d = text.getDocument();
+        if (d != null) d.addDocumentListener(dl);
     }
 
     public static void main(String[] args) throws IOException {

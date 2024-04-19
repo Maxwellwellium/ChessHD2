@@ -12,8 +12,6 @@ import java.util.Objects;
 public class Board {
     Square[] masterBoard = new Square[64];
 
-    Piece[] pieceList;
-
     JPanel[] imagePieceList = new JPanel[64];
     JPanel[] imageSelectList = new JPanel[64];
     JPanel[] imageAttackList = new JPanel[64];
