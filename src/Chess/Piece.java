@@ -51,7 +51,7 @@ public class Piece {
         if (!(currentRow == 0)) {
             rows.set(0, currentRow - 1);
         }
-        if (!(currentRow == 7)) {
+        if (!(currentRow == 8)) {
             rows.set(1, currentRow + 1);
         }
         columns.set(2, Constants.ALPHA[currentColInt]);
@@ -74,18 +74,21 @@ public class Piece {
         int currentRow = this.square.getRow();
 
         int direction;
+        int lastRow;
         if (this.white) {
             direction = 1;
+            lastRow = 8;
         } else {
             direction = -1;
+            lastRow = 1;
         }
 
-        if (currentRow != 8) {
+        if (currentRow != (lastRow)) {
             int m1 = coordsToIndex(currentCol, (currentRow + direction)); //square directly in front of pawn
             if (Board.masterBoard[m1].piece == null) {
                 validMovesList.add(m1);
             }
-            if ((currentRow != 7) && (!moved)) {
+            if ((currentRow != (lastRow - direction)) && (!moved)) {
                 int m2 = coordsToIndex(currentCol, (currentRow + (2 * direction))); //2 squares directly in front of pawn
                 if ((Board.masterBoard[m1].piece == null) && (Board.masterBoard[m2].piece == null)) {
                     validMovesList.add(m2);

@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
 
@@ -125,10 +124,10 @@ public class Board {
             case "a", "A" -> new Amazon(true, masterBoard[masterIndex]);
             case "b", "B" -> new Bishop(true, masterBoard[masterIndex]);
             case "c", "C" -> new Camel(true, masterBoard[masterIndex]);
-            case "e", "E" -> new Cameleater(true, masterBoard[masterIndex]);
+            case "e", "E" -> new Cameleater(false, masterBoard[masterIndex]);
             case "k", "K" -> new King(true, masterBoard[masterIndex]);
             case "n", "N" -> new Knight(true, masterBoard[masterIndex]);
-            case "p", "P" -> new Pawn(false, masterBoard[masterIndex]);
+            case "p", "P" -> new Pawn(true, masterBoard[masterIndex]);
             case "q", "Q" -> new Queen(true, masterBoard[masterIndex]);
             case "r", "R" -> new Rook(true, masterBoard[masterIndex]);
             case null, default -> new Brine(false, masterBoard[masterIndex]);
@@ -243,6 +242,7 @@ public class Board {
         }
     }
     public void updateSelected(int newSelectedNumber, Square square) {
+        SoundPlayer soundPlayer = new SoundPlayer();
         //if the same square is clicked multiple times, toggle whether it's selected or not
         if (newSelectedNumber == selectedSquareNumber) {
             if (selectedSquareNumber != -1) {
@@ -276,16 +276,45 @@ public class Board {
             if (masterBoard[newSelectedNumber].piece != null) {
                 if (masterBoard[newSelectedNumber].piece.getClass() == Brine.class) {
                     int escapeChoice = new Random().nextInt(masterBoard[newSelectedNumber].piece.escapeMovements().size()); //choose escape square
+                   System.out.println(escapeChoice);
                     int escapeSquare = (int) masterBoard[newSelectedNumber].piece.escapeMovements().get(escapeChoice);
+                    System.out.println(escapeSquare);
+                    if (!(escapeSquare == selectedSquareNumber)) {
+                        System.out.println(escapeSquare);
+                        System.out.println(selectedSquareNumber);
+                        try {
+                            soundPlayer.playSound("Assets/dodgesuccess.wav", false);
+                        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    } else {
+                        try {
+                            soundPlayer.playSound("Assets/dodgefail.wav", false);
+                        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
                     masterBoard[escapeSquare].piece = masterBoard[newSelectedNumber].piece; //put brine on escape square
                     imagePieceLabels[escapeSquare].setIcon(new ImageIcon(masterBoard[newSelectedNumber].piece.getImage())); //set brine image
                 }
             }
-            masterBoard[newSelectedNumber].piece = selectedPiece;
-            imagePieceLabels[newSelectedNumber].setIcon(new ImageIcon(selectedPiece.getImage()));
-            //update square of piece
-            selectedPiece.square = masterBoard[newSelectedNumber];
-            selectedPiece.moved = true;
+            //cameleater logic
+            if ((masterBoard[selectedSquareNumber].piece.getClass() == Knight.class
+                    || masterBoard[selectedSquareNumber].piece.getClass() == Camel.class)
+                    && masterBoard[newSelectedNumber].piece.getClass() == Cameleater.class) {
+                //Play Sound
+                try {
+                    soundPlayer.playSound("Assets/cameleater_eats.wav", false);
+                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                masterBoard[newSelectedNumber].piece = selectedPiece;
+                imagePieceLabels[newSelectedNumber].setIcon(new ImageIcon(selectedPiece.getImage()));
+                //update square of piece
+                selectedPiece.square = masterBoard[newSelectedNumber];
+                selectedPiece.moved = true;
+            }
             //old squares piece is null
             masterBoard[selectedSquareNumber].piece = null;
             imagePieceLabels[selectedSquareNumber].setIcon(null);
