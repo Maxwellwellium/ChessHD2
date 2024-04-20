@@ -243,25 +243,25 @@ public class Board {
                     imageAttackLabels[attackSquareIndexes].setIcon(new ImageIcon(Constants.attackIMG)); //set icon of new selected square
                 }
             }
-            System.out.println("attacks successfully displayed");
         } else {
             for (JLabel label : imageAttackLabels) {
                 label.setIcon(null);
             }
-            System.out.println("no attacks");
         }
     }
     public void updateSelected(int newSelectedNumber, Square square) {
         //if the same square is clicked multiple times, toggle whether it's selected or not
         if (newSelectedNumber == selectedSquareNumber) {
             if (selectedSquareNumber != -1) {
+                //unselects the square
                 imageSelectLabels[selectedSquareNumber].setIcon(null); //reset icon
                 selectedSquareNumber = -1; //reset selected square number
                 selectedSquare = null; //deselect square
                 selectedPiece = null; //deselect piece
                 updateAttack(selectedPiece); //update valid moves overlay
-                System.out.println("no selected square");
+                System.out.println("square unselected");
             } else {
+                //reselects the square
                 imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
                 selectedSquare = square; //update variables
                 selectedPiece = selectedSquare.piece; //deselect piece
@@ -273,14 +273,38 @@ public class Board {
         }
         //if different square is clicked, make it the new selected square
         if (selectedSquareNumber != -1) {
-            imageSelectLabels[selectedSquareNumber].setIcon(null); //reset icon
+            imageSelectLabels[selectedSquareNumber].setIcon(null); //reset icon of old selected square
         }
-        imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
-        selectedSquare = square; //update variables
-        selectedPiece = selectedSquare.piece; //deselect piece
-        updateAttack(selectedPiece); //update valid moves overlay
-        selectedSquareNumber = newSelectedNumber; //update variables
-        System.out.println("Selected " +selectedSquare.col+selectedSquare.row);
+
+        //if in attacklist
+        if (imageAttackLabels[newSelectedNumber].getIcon() != null) {
+            //piece of new square is now piece moved
+            masterBoard[newSelectedNumber].piece = selectedPiece;
+            imagePieceLabels[newSelectedNumber].setIcon(new ImageIcon(selectedPiece.getImage()));
+            //update square of piece
+            selectedPiece.square = masterBoard[newSelectedNumber];
+            selectedPiece.moved = true;
+            //old squares piece is null
+            masterBoard[selectedSquareNumber].piece = null;
+            imagePieceLabels[selectedSquareNumber].setIcon(null);
+            //deselect square
+            selectedSquare = null;
+            selectedSquareNumber = -1;
+            //deselect piece
+            selectedPiece = null;
+            //update valid moves overlay
+            updateAttack(selectedPiece);
+            clearIcons(imageAttackLabels);
+            System.out.println("Piece moved, Square unselected");
+        } else {
+            //if not in attacklist
+            imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
+            selectedSquare = square; //update variables
+            selectedPiece = selectedSquare.piece; //deselect piece
+            updateAttack(selectedPiece); //update valid moves overlay
+            selectedSquareNumber = newSelectedNumber; //update variables
+            System.out.println("Selected " + selectedSquare.col + selectedSquare.row);
+        }
     }
     public void setDimensions(JComponent component, int factor) {
         component.setMinimumSize(new Dimension(factor * 100, factor * 100)); //sets button size

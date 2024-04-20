@@ -21,14 +21,11 @@ public class Piece {
 
     public Object[] Movements() {
         ArrayList<Integer> validMovesList = new ArrayList<>();
-
-
         return validMovesList.toArray();
     }
 
     public ArrayList<Integer> pawnMovements() {
         ArrayList<Integer> validMovesList = new ArrayList<>(4);
-
         String currentCol = this.square.getCol();
         int currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
         int currentRow = this.square.getRow();
@@ -53,17 +50,18 @@ public class Piece {
             }
             if (!Objects.equals(Constants.ALPHA[currentColInt], "a")) {
                 int m3 = coordsToIndex(Constants.ALPHA[currentColInt - 1], (currentRow + direction));
-                if (Board.masterBoard[m3].piece == null) {
+                if (Board.masterBoard[m3].piece != null) {
                     validMovesList.add(m3);
                 }
             }
             if (!Objects.equals(Constants.ALPHA[currentColInt], "h")) {
                 int m4 = coordsToIndex(Constants.ALPHA[currentColInt + 1], (currentRow + direction));
-                if (Board.masterBoard[m4].piece == null) {
+                if (Board.masterBoard[m4].piece != null) {
                     validMovesList.add(m4);
                 }
             }
         }
+        System.out.println(validMovesList);
         return validMovesList;
     }
 
