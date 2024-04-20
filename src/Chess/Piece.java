@@ -50,13 +50,13 @@ public class Piece {
             }
             if (!Objects.equals(Constants.ALPHA[currentColInt], "a")) {
                 int m3 = coordsToIndex(Constants.ALPHA[currentColInt - 1], (currentRow + direction));
-                if (Board.masterBoard[m3].piece != null) {
+                if ((Board.masterBoard[m3].piece != null) && (Board.masterBoard[m3].piece.white != this.white)) {
                     validMovesList.add(m3);
                 }
             }
             if (!Objects.equals(Constants.ALPHA[currentColInt], "h")) {
                 int m4 = coordsToIndex(Constants.ALPHA[currentColInt + 1], (currentRow + direction));
-                if (Board.masterBoard[m4].piece != null) {
+                if ((Board.masterBoard[m4].piece != null) && (Board.masterBoard[m4].piece.white != this.white)) {
                     validMovesList.add(m4);
                 }
             }
@@ -65,13 +65,98 @@ public class Piece {
         return validMovesList;
     }
 
+    public ArrayList<Integer> knightMovements() {
+        System.out.println("function called");
+        ArrayList<Integer> validMovesList = new ArrayList<>(8);
+        String currentCol = this.square.getCol();
+        int currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        int currentRow = this.square.getRow();
+
+        ArrayList<String> columns = new ArrayList<>(2);
+        ArrayList<Integer> rows = new ArrayList<>(2);
+        columns.add("x");
+        columns.add("x");
+        rows.add(-1);
+        rows.add(-1);
+
+        if (!Objects.equals(currentCol, "a") && !Objects.equals(currentCol, "b")) {
+            columns.set(0, Constants.ALPHA[currentColInt - 2]);
+        }
+        if (!Objects.equals(currentCol, "g") && !Objects.equals(currentCol, "h")) {
+            columns.set(1, Constants.ALPHA[currentColInt + 2]);
+        }
+        if (currentRow >= 1) {
+            rows.set(0, currentRow - 1);
+        }
+        if (currentRow <= 7) {
+            rows.set(1, currentRow + 1);
+        }
+
+        for (int n : rows) {
+            for (String s : columns) {
+                int mx = coordsToIndex(s, n);
+                if (mx != -1) {
+                    if (Board.masterBoard[mx].piece != null) {
+                        if (Board.masterBoard[mx].piece.white != this.white) {
+                            validMovesList.add(mx);
+                        }
+                    } else {
+                        validMovesList.add(mx);
+                    }
+                }
+            }
+        }
+
+        ArrayList<String> columns2 = new ArrayList<>(2);
+        ArrayList<Integer> rows2 = new ArrayList<>(2);
+        columns2.add("x");
+        columns2.add("x");
+        rows2.add(-1);
+        rows2.add(-1);
+
+        if (!Objects.equals(currentCol, "a")) {
+            columns2.set(0, Constants.ALPHA[currentColInt - 1]);
+        }
+        if (!Objects.equals(currentCol, "h")) {
+            columns2.set(1, Constants.ALPHA[currentColInt + 1]);
+        }
+        if (currentRow > 1) {
+            rows2.set(0, currentRow - 2);
+        }
+        if (currentRow < 7) {
+            rows2.set(1, currentRow + 2);
+        }
+
+        for (int n : rows2) {
+            for (String s : columns2) {
+                int mx = coordsToIndex(s, n);
+                if (mx != -1) {
+                    if (Board.masterBoard[mx].piece != null) {
+                        if (Board.masterBoard[mx].piece.white != this.white) {
+                            validMovesList.add(mx);
+                        }
+                    } else {
+                        validMovesList.add(mx);
+                    }
+                }
+            }
+        }
+
+        System.out.println(validMovesList);
+        return validMovesList;
+    }
+
     public int coordsToIndex(String col, int row) {
-        try {
-            int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
-            return (Constants.NUM_REVERSED[row - 1] * 8) - 8 + alphaOffset;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Not all moves on board");
+        if ((Objects.equals(col, "x")) || row == -1) {
             return -1;
+        } else {
+            try {
+                int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
+                return (Constants.NUM_REVERSED[row - 1] * 8) - 8 + alphaOffset;
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Not all moves on board");
+                return -1;
+            }
         }
     }
     public int coordsToIndex(String col, String row) {

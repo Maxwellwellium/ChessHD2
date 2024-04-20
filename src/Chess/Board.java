@@ -236,6 +236,7 @@ public class Board {
     }
 
     public void updateAttack(Piece piece) {
+        clearIcons(imageAttackLabels);
         if (selectedPiece != null) {
             for (Object i : selectedPiece.Movements()) {
                 int attackSquareIndexes = (int) i;
