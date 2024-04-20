@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Amazon extends Piece {
+    int classID = 1;
+    public int getClassID() {
+        return classID;
+    }
     public Amazon(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

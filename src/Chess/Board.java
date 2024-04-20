@@ -134,7 +134,7 @@ public class Board {
         };
 
         boolean spawned = checkSpawnSquare(piece, masterIndex);
-
+        //have reset attacklabels
         masterBoard[masterIndex].setPiece(piece); //in future check if piece is here
 
         imagePieceLabels[masterIndex].setIcon(new ImageIcon(piece.getImage())); // store img differently to refer to dynamically
@@ -242,7 +242,6 @@ public class Board {
         }
     }
     public void updateSelected(int newSelectedNumber, Square square) {
-        SoundPlayer soundPlayer = new SoundPlayer();
         //if the same square is clicked multiple times, toggle whether it's selected or not
         if (newSelectedNumber == selectedSquareNumber) {
             if (selectedSquareNumber != -1) {
@@ -271,46 +270,34 @@ public class Board {
 
         //if in attacklist
         if (imageAttackLabels[newSelectedNumber].getIcon() != null) {
-            //piece of new square is now piece moved
-            //brine dodging movement, due to randomness brine has 1/9 chance not to dodge
+
             if (masterBoard[newSelectedNumber].piece != null) {
+                //brine dodging movement, due to randomness brine has 1/9 chance not to dodge
                 if (masterBoard[newSelectedNumber].piece.getClass() == Brine.class) {
                     int escapeChoice = new Random().nextInt(masterBoard[newSelectedNumber].piece.escapeMovements().size()); //choose escape square
-                   System.out.println(escapeChoice);
                     int escapeSquare = (int) masterBoard[newSelectedNumber].piece.escapeMovements().get(escapeChoice);
-                    System.out.println(escapeSquare);
-                    if (!(escapeSquare == selectedSquareNumber)) {
-                        System.out.println(escapeSquare);
-                        System.out.println(selectedSquareNumber);
-                        try {
-                            soundPlayer.playSound("Assets/dodgesuccess.wav", false);
-                        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    } else {
-                        try {
-                            soundPlayer.playSound("Assets/dodgefail.wav", false);
-                        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
+                    captureSound(masterBoard[selectedSquareNumber], masterBoard[newSelectedNumber], !(escapeSquare == selectedSquareNumber));
                     masterBoard[escapeSquare].piece = masterBoard[newSelectedNumber].piece; //put brine on escape square
                     imagePieceLabels[escapeSquare].setIcon(new ImageIcon(masterBoard[newSelectedNumber].piece.getImage())); //set brine image
                 }
-            }
-            //cameleater logic
-            if ((masterBoard[selectedSquareNumber].piece.getClass() == Knight.class
-                    || masterBoard[selectedSquareNumber].piece.getClass() == Camel.class)
-                    && masterBoard[newSelectedNumber].piece != null) {
-                if (masterBoard[newSelectedNumber].piece.getClass() == Cameleater.class) {
-                    //Play Sound
-                    try {
-                        soundPlayer.playSound("Assets/cameleater_eats.wav", false);
-                    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                        throw new RuntimeException(ex);
+
+                //cameleater logic
+                if ((masterBoard[selectedSquareNumber].piece.getClass() == Knight.class
+                        || masterBoard[selectedSquareNumber].piece.getClass() == Camel.class)
+                        && masterBoard[newSelectedNumber].piece.getClass() == Cameleater.class) {
+                    captureSound(masterBoard[selectedSquareNumber], masterBoard[newSelectedNumber], false);
+                } else {
+                    if (masterBoard[newSelectedNumber].piece.getClass() != Brine.class) {
+                        captureSound(masterBoard[selectedSquareNumber], masterBoard[newSelectedNumber], false);
                     }
+                    masterBoard[newSelectedNumber].piece = selectedPiece;
+                    imagePieceLabels[newSelectedNumber].setIcon(new ImageIcon(selectedPiece.getImage()));
+                    //update square of piece
+                    selectedPiece.square = masterBoard[newSelectedNumber];
+                    selectedPiece.moved = true;
                 }
             } else {
+                //move sound goes here
                 masterBoard[newSelectedNumber].piece = selectedPiece;
                 imagePieceLabels[newSelectedNumber].setIcon(new ImageIcon(selectedPiece.getImage()));
                 //update square of piece
@@ -329,6 +316,7 @@ public class Board {
             updateAttack(selectedPiece);
             clearIcons(imageAttackLabels);
             System.out.println("Piece moved, Square unselected");
+
         } else {
             //if not in attacklist
             imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
@@ -337,6 +325,183 @@ public class Board {
             updateAttack(selectedPiece); //update valid moves overlay
             selectedSquareNumber = newSelectedNumber; //update variables
             System.out.println("Selected " + selectedSquare.col + selectedSquare.row);
+        }
+    }
+
+    public void captureSound(Square startSquare, Square endSquare, boolean briney) {
+        SoundPlayer soundPlayer = new SoundPlayer();
+        String soundFile = "Assets/defaultcapture.wav";
+
+        if (endSquare.piece != null) {
+            Piece capturer = startSquare.piece;
+            Piece captured = endSquare.piece;
+
+            if (capturer.getClass() == King.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Amazon.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Queen.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Rook.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Cameleater.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Camel.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    case 4 -> "Assets/cameleater_eats.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Knight.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    case 4 -> "Assets/cameleater_eats.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Bishop.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else if (capturer.getClass() == Pawn.class) {
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            } else { // Brine
+                soundFile = switch (captured.getClassID()) {
+                    //case 0 -> "Assets/defaultcapture.wav"; // King
+                    //case 1 -> "Assets/defaultcapture.wav"; // Amazon
+                    //case 2 -> "Assets/defaultcapture.wav"; // Queen
+                    //case 3 -> "Assets/defaultcapture.wav"; // Rook
+                    //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
+                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
+                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    //case 7 -> "Assets/defaultcapture.wav"; // Bishop
+                    //case 8 -> "Assets/defaultcapture.wav"; // Pawn
+                    case 9 -> { // Brine
+                        if (briney) {yield "Assets/dodgesuccess.wav";}
+                        else { yield "Assets/dodgefail.wav";}}
+                    default -> "Assets/defaultcapture.wav";
+                };
+            }
+            try {
+                soundPlayer.playSound(soundFile, false);
+            } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
     public void setDimensions(JComponent component, int factor) {

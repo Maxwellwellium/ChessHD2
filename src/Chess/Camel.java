@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Camel extends Piece {
+    int classID = 5;
+    public int getClassID() {
+        return classID;
+    }
     public Camel(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

@@ -14,6 +14,11 @@ public class Piece {
     BufferedImage image;
     Square square;
 
+    int classID;
+    public int getClassID() {
+        return classID;
+    }
+
     public Piece(boolean white, Square square) {
         this.white = white;
         this.square = square; //determines col & row

@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Knight extends Piece {
+    int classID = 6;
+    public int getClassID() {
+        return classID;
+    }
     public Knight(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

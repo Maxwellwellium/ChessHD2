@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Pawn extends Piece {
+    int classID = 8;
+    public int getClassID() {
+        return classID;
+    }
     public Pawn(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

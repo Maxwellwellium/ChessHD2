@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Cameleater extends Piece {
+    int classID = 4;
+    public int getClassID() {
+        return classID;
+    }
     public Cameleater(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

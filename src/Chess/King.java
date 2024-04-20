@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class King extends Piece {
+    int classID = 0;
+    public int getClassID() {
+        return classID;
+    }
+
     public King(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Bishop extends Piece {
+    int classID = 7;
+    public int getClassID() {
+        return classID;
+    }
     public Bishop(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

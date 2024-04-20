@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Queen extends Piece {
+    int classID = 2;
+    public int getClassID() {
+        return classID;
+    }
     public Queen(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {

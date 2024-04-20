@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class Brine extends Piece {
+    int classID = 9;
+    public int getClassID() {
+        return classID;
+    }
     public Brine(boolean white, Square square) throws IOException {
         super(white, square);
         if (white) {
