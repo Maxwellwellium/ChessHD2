@@ -226,9 +226,24 @@ public class Piece {
         System.out.println(validMovesList);
         return validMovesList;
     }
+    public boolean iteratorLogic(ArrayList<Integer> arrayList, int index) {
+        if (index != -1) {
+            if (Board.masterBoard[index].piece == null) {
+                arrayList.add(index);
+                return false;
+            } else {
+                if (Board.masterBoard[index].piece.white != this.white) {
+                    arrayList.add(index);
+                    return true;
+                }
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
 
     public ArrayList<Integer> rookMovements() {
-        System.out.println("function called");
         ArrayList<Integer> validMovesList = new ArrayList<>(16);
         String currentCol = this.square.getCol();
         int currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
@@ -239,93 +254,118 @@ public class Piece {
             currentRow += 1;
             int mx = coordsToIndex(Constants.ALPHA[currentColInt], (currentRow));
 
-            if (mx != -1) {
-                if (Board.masterBoard[mx].piece == null) {
-                    validMovesList.add(mx);
-                } else {
-                    if (Board.masterBoard[mx].piece.white != this.white) {
-                        validMovesList.add(mx);
-                        break;
-                    }
-                    break;
-                }
-            } else {
+            if (iteratorLogic(validMovesList, mx)) {
                 break;
             }
         }
         currentRow = this.square.getRow(); //reset
-        System.out.println("first loop finished");
-        while (currentRow - 1 >= 0) {
 
+        while (currentRow - 1 >= 0) {
             currentRow -= 1;
             int mx = coordsToIndex(Constants.ALPHA[currentColInt], (currentRow));
 
-            if (mx != -1) {
-                if (Board.masterBoard[mx].piece == null) {
-                    validMovesList.add(mx);
-                } else {
-                    if (Board.masterBoard[mx].piece.white != this.white) {
-                        validMovesList.add(mx);
-                        break;
-                    }
-                    break;
-                }
-            } else {
+            if (iteratorLogic(validMovesList, mx)) {
                 break;
             }
         }
         currentRow = this.square.getRow(); //reset
-        System.out.println("second loop finished");
-
 
         while (currentColInt - 1 >= 0) {
             currentColInt -= 1;
             currentCol = Constants.ALPHA[currentColInt];
-
             int mx = coordsToIndex(currentCol, (currentRow));
 
-            if (mx != -1) {
-                if (Board.masterBoard[mx].piece == null) {
-                    validMovesList.add(mx);
-                } else {
-                    if (Board.masterBoard[mx].piece.white != this.white) {
-                        validMovesList.add(mx);
-                        break;
-                    }
-                    break;
-                }
-            } else {
+            if (iteratorLogic(validMovesList, mx)) {
                 break;
             }
         }
         currentCol = this.square.getCol(); //reset
         currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol); //reset
-        System.out.println("third loop finished");
 
         while  (currentColInt + 1 < Constants.ALPHA.length) {
             currentColInt += 1;
             currentCol = Constants.ALPHA[currentColInt];
-
             int mx = coordsToIndex(currentCol, (currentRow));
 
-            if (mx != -1) {
-                if (Board.masterBoard[mx].piece == null) {
-                    validMovesList.add(mx);
-                } else {
-                    if (Board.masterBoard[mx].piece.white != this.white) {
-                        validMovesList.add(mx);
-                        break;
-                    }
-                    break;
-                }
-            } else {
+            if (iteratorLogic(validMovesList, mx)) {
                 break;
             }
         }
         currentCol = this.square.getCol(); //reset
         currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol); //reset
-        System.out.println("fourth loop finished");
 
+        System.out.println(validMovesList);
+        return validMovesList;
+    }
+
+    public ArrayList<Integer> bishopMovements() {
+        System.out.println("function called");
+        ArrayList<Integer> validMovesList = new ArrayList<>(16);
+        String currentCol = this.square.getCol();
+        int currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        int currentRow = this.square.getRow();
+
+        //top left
+        while ((currentRow + 1 <= Constants.NUM.length) && (currentColInt - 1 >= 0)) {
+            currentRow += 1;
+            currentColInt -= 1;
+            currentCol = Constants.ALPHA[currentColInt];
+            int mx = coordsToIndex(Constants.ALPHA[currentColInt], (currentRow));
+
+            if (iteratorLogic(validMovesList, mx)) {
+                break;
+            }
+        }
+        currentCol = this.square.getCol();
+        currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        currentRow = this.square.getRow();
+        System.out.println("first loop finished");
+
+        //top right
+        while ((currentRow + 1 <= Constants.NUM.length) && (currentColInt + 1 < Constants.ALPHA.length)) {
+            currentRow += 1;
+            currentColInt += 1;
+            currentCol = Constants.ALPHA[currentColInt];
+            int mx = coordsToIndex(Constants.ALPHA[currentColInt], (currentRow));
+
+            if (iteratorLogic(validMovesList, mx)) {
+                break;
+            }
+        }
+        currentCol = this.square.getCol();
+        currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        currentRow = this.square.getRow();
+        System.out.println("second loop finished");
+        //bottom right
+        while ((currentRow - 1 >= 0) && (currentColInt + 1 < Constants.ALPHA.length)) {
+            currentRow -= 1;
+            currentColInt += 1;
+            currentCol = Constants.ALPHA[currentColInt];
+            int mx = coordsToIndex(Constants.ALPHA[currentColInt], (currentRow));
+
+            if (iteratorLogic(validMovesList, mx)) {
+                break;
+            }
+        }
+        currentCol = this.square.getCol();
+        currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        currentRow = this.square.getRow();
+        System.out.println("third loop finished");
+        //bottom left
+        while ((currentRow - 1 >= 0) && (currentColInt - 1 >= 0)) {
+            currentRow -= 1;
+            currentColInt -= 1;
+            currentCol = Constants.ALPHA[currentColInt];
+            int mx = coordsToIndex(Constants.ALPHA[currentColInt], (currentRow));
+
+            if (iteratorLogic(validMovesList, mx)) {
+                break;
+            }
+        }
+        currentCol = this.square.getCol();
+        currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        currentRow = this.square.getRow();
+        System.out.println("fourth loop finished");
 
         System.out.println(validMovesList);
         return validMovesList;

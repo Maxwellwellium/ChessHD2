@@ -2,6 +2,7 @@ package Chess;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Bishop extends Piece {
@@ -12,5 +13,11 @@ public class Bishop extends Piece {
         } else {
             this.image = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/Pieces/Black/bishop.png")));
         }
+    }
+    public Object[] Movements() {
+        ArrayList<Integer> validMovesList = new ArrayList<>();
+        validMovesList.addAll(bishopMovements());
+
+        return validMovesList.toArray();
     }
 }

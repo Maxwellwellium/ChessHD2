@@ -2,6 +2,7 @@ package Chess;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Queen extends Piece {
@@ -12,5 +13,12 @@ public class Queen extends Piece {
         } else {
             this.image = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/Pieces/Black/queen.png")));
         }
+    }
+    public Object[] Movements() {
+        ArrayList<Integer> validMovesList = new ArrayList<>();
+        validMovesList.addAll(rookMovements());
+        validMovesList.addAll(bishopMovements());
+
+        return validMovesList.toArray();
     }
 }
