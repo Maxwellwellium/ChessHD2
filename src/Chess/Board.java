@@ -133,7 +133,7 @@ public class Board {
             case "e", "E" -> new Cameleater(true, masterBoard[masterIndex]);
             case "k", "K" -> new King(true, masterBoard[masterIndex]);
             case "n", "N" -> new Knight(true, masterBoard[masterIndex]);
-            case "p", "P" -> new Pawn(true, masterBoard[masterIndex]);
+            case "p", "P" -> new Pawn(false, masterBoard[masterIndex]);
             case "q", "Q" -> new Queen(true, masterBoard[masterIndex]);
             case "r", "R" -> new Rook(true, masterBoard[masterIndex]);
             case null, default -> new Brine(true, masterBoard[masterIndex]);
