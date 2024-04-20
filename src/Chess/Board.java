@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 public class Board {
-    Square[] masterBoard = new Square[64];
+    static Square[] masterBoard = new Square[64];
 
     JPanel[] imagePieceList = new JPanel[64];
     JPanel[] imageSelectList = new JPanel[64];
@@ -26,7 +26,7 @@ public class Board {
     Piece selectedPiece = null;
     int selectedSquareNumber = -1;
 
-    public Square[] getMasterBoard() {
+    public static Square[] getMasterBoard() {
         return masterBoard;
     }
     public void setMasterBoard(Square[] masterBoard) {
@@ -234,6 +234,23 @@ public class Board {
             label.setIcon(null);
         }
     }
+
+    public void updateAttack(Piece piece) {
+        if (selectedPiece != null) {
+            for (Object i : selectedPiece.Movements()) {
+                int attackSquareIndexes = (int) i;
+                if (attackSquareIndexes != -1) {
+                    imageAttackLabels[attackSquareIndexes].setIcon(new ImageIcon(Constants.attackIMG)); //set icon of new selected square
+                }
+            }
+            System.out.println("attacks successfully displayed");
+        } else {
+            for (JLabel label : imageAttackLabels) {
+                label.setIcon(null);
+            }
+            System.out.println("no attacks");
+        }
+    }
     public void updateSelected(int newSelectedNumber, Square square) {
         //if the same square is clicked multiple times, toggle whether it's selected or not
         if (newSelectedNumber == selectedSquareNumber) {
@@ -241,10 +258,14 @@ public class Board {
                 imageSelectLabels[selectedSquareNumber].setIcon(null); //reset icon
                 selectedSquareNumber = -1; //reset selected square number
                 selectedSquare = null; //deselect square
+                selectedPiece = null; //deselect piece
+                updateAttack(selectedPiece); //update valid moves overlay
                 System.out.println("no selected square");
             } else {
                 imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
                 selectedSquare = square; //update variables
+                selectedPiece = selectedSquare.piece; //deselect piece
+                updateAttack(selectedPiece); //update valid moves overlay
                 selectedSquareNumber = newSelectedNumber; //update variables
                 System.out.println("Selected " +selectedSquare.col+selectedSquare.row);
             }
@@ -256,6 +277,8 @@ public class Board {
         }
         imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
         selectedSquare = square; //update variables
+        selectedPiece = selectedSquare.piece; //deselect piece
+        updateAttack(selectedPiece); //update valid moves overlay
         selectedSquareNumber = newSelectedNumber; //update variables
         System.out.println("Selected " +selectedSquare.col+selectedSquare.row);
     }

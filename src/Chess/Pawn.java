@@ -3,6 +3,7 @@ package Chess;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Pawn extends Piece {
@@ -13,6 +14,13 @@ public class Pawn extends Piece {
         } else {
             this.image = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/Pieces/Black/pawn.png")));
         }
+    }
+
+    public Object[] Movements() {
+        ArrayList<Integer> validMovesList = new ArrayList<>();
+        validMovesList.addAll(pawnMovements());
+
+        return validMovesList.toArray();
     }
 
 

@@ -27,8 +27,6 @@ import javax.swing.text.Document;
 
 public class Main extends JFrame{
 
-    Piece[] pieceList;
-
     public Main() throws IOException {
         // GENERAL GUI PARAMETERS
         setDefaultCloseOperation(EXIT_ON_CLOSE);
