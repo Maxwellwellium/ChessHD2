@@ -301,12 +301,14 @@ public class Board {
             //cameleater logic
             if ((masterBoard[selectedSquareNumber].piece.getClass() == Knight.class
                     || masterBoard[selectedSquareNumber].piece.getClass() == Camel.class)
-                    && masterBoard[newSelectedNumber].piece.getClass() == Cameleater.class) {
-                //Play Sound
-                try {
-                    soundPlayer.playSound("Assets/cameleater_eats.wav", false);
-                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-                    throw new RuntimeException(ex);
+                    && masterBoard[newSelectedNumber].piece != null) {
+                if (masterBoard[newSelectedNumber].piece.getClass() == Cameleater.class) {
+                    //Play Sound
+                    try {
+                        soundPlayer.playSound("Assets/cameleater_eats.wav", false);
+                    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             } else {
                 masterBoard[newSelectedNumber].piece = selectedPiece;

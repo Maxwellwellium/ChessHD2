@@ -42,11 +42,11 @@ public class Main extends JFrame{
         SoundPlayer soundPlayer = new SoundPlayer();
 
         // BACKGROUND MUSIC
-        try {
-            soundPlayer.playSound("Assets/bach.wav", true);
-        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
-            throw new RuntimeException(ex);
-        }
+        //try {
+        //    soundPlayer.playSound("Assets/bach.wav", true);
+        //} catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+        //    throw new RuntimeException(ex);
+        //}
         ////////////////////////////////////////////////////////
 
         BufferedImage I_background = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/background.png")));
