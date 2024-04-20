@@ -3,6 +3,7 @@ package Chess;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -18,12 +19,54 @@ public class Piece {
         this.square = square; //determines col & row
         this.moved = false;
     }
-
     public Object[] Movements() {
         ArrayList<Integer> validMovesList = new ArrayList<>();
         return validMovesList.toArray();
     }
+    public List<?> escapeMovements() {
+        ArrayList<Integer> validMovesList = new ArrayList<>();
+        return List.of(validMovesList.toArray());
+    }
+    public ArrayList<Integer> kingMovements() {
+        ArrayList<Integer> validMovesList = new ArrayList<>(4);
+        String currentCol = this.square.getCol();
+        int currentColInt = ArrayUtils.indexOf(Constants.ALPHA, currentCol);
+        int currentRow = this.square.getRow();
 
+        ArrayList<String> columns = new ArrayList<>(3);
+        ArrayList<Integer> rows = new ArrayList<>(3);
+        columns.add("x");
+        columns.add("x");
+        columns.add("x");
+        rows.add(-1);
+        rows.add(-1);
+        rows.add(-1);
+
+        if (!Objects.equals(currentCol, "a")) {
+            columns.set(0, Constants.ALPHA[currentColInt - 1]);
+        }
+        if (!Objects.equals(currentCol, "h")) {
+            columns.set(1, Constants.ALPHA[currentColInt + 1]);
+        }
+        if (!(currentRow == 0)) {
+            rows.set(0, currentRow - 1);
+        }
+        if (!(currentRow == 7)) {
+            rows.set(1, currentRow + 1);
+        }
+        columns.set(2, Constants.ALPHA[currentColInt]);
+        rows.set(2, currentRow);
+
+        for (int n : rows) {
+            for (String s : columns) {
+                int mx = coordsToIndex(s, n);
+                iteratorLogic(validMovesList, mx);
+            }
+        }
+
+        System.out.println(validMovesList);
+        return validMovesList;
+    }
     public ArrayList<Integer> pawnMovements() {
         ArrayList<Integer> validMovesList = new ArrayList<>(4);
         String currentCol = this.square.getCol();
@@ -64,7 +107,6 @@ public class Piece {
         System.out.println(validMovesList);
         return validMovesList;
     }
-
     public ArrayList<Integer> knightMovements() {
         System.out.println("function called");
         ArrayList<Integer> validMovesList = new ArrayList<>(8);
@@ -95,15 +137,7 @@ public class Piece {
         for (int n : rows) {
             for (String s : columns) {
                 int mx = coordsToIndex(s, n);
-                if (mx != -1) {
-                    if (Board.masterBoard[mx].piece != null) {
-                        if (Board.masterBoard[mx].piece.white != this.white) {
-                            validMovesList.add(mx);
-                        }
-                    } else {
-                        validMovesList.add(mx);
-                    }
-                }
+                iteratorLogic(validMovesList, mx);
             }
         }
 
@@ -130,22 +164,13 @@ public class Piece {
         for (int n : rows2) {
             for (String s : columns2) {
                 int mx = coordsToIndex(s, n);
-                if (mx != -1) {
-                    if (Board.masterBoard[mx].piece != null) {
-                        if (Board.masterBoard[mx].piece.white != this.white) {
-                            validMovesList.add(mx);
-                        }
-                    } else {
-                        validMovesList.add(mx);
-                    }
-                }
+                iteratorLogic(validMovesList, mx);
             }
         }
 
         System.out.println(validMovesList);
         return validMovesList;
     }
-
     public ArrayList<Integer> camelMovements() {
         System.out.println("function called");
         ArrayList<Integer> validMovesList = new ArrayList<>(8);
@@ -176,15 +201,7 @@ public class Piece {
         for (int n : rows) {
             for (String s : columns) {
                 int mx = coordsToIndex(s, n);
-                if (mx != -1) {
-                    if (Board.masterBoard[mx].piece != null) {
-                        if (Board.masterBoard[mx].piece.white != this.white) {
-                            validMovesList.add(mx);
-                        }
-                    } else {
-                        validMovesList.add(mx);
-                    }
-                }
+                iteratorLogic(validMovesList, mx);
             }
         }
 
@@ -211,38 +228,13 @@ public class Piece {
         for (int n : rows2) {
             for (String s : columns2) {
                 int mx = coordsToIndex(s, n);
-                if (mx != -1) {
-                    if (Board.masterBoard[mx].piece != null) {
-                        if (Board.masterBoard[mx].piece.white != this.white) {
-                            validMovesList.add(mx);
-                        }
-                    } else {
-                        validMovesList.add(mx);
-                    }
-                }
+                iteratorLogic(validMovesList, mx);
             }
         }
 
         System.out.println(validMovesList);
         return validMovesList;
     }
-    public boolean iteratorLogic(ArrayList<Integer> arrayList, int index) {
-        if (index != -1) {
-            if (Board.masterBoard[index].piece == null) {
-                arrayList.add(index);
-                return false;
-            } else {
-                if (Board.masterBoard[index].piece.white != this.white) {
-                    arrayList.add(index);
-                    return true;
-                }
-                return true;
-            }
-        } else {
-            return true;
-        }
-    }
-
     public ArrayList<Integer> rookMovements() {
         ArrayList<Integer> validMovesList = new ArrayList<>(16);
         String currentCol = this.square.getCol();
@@ -297,7 +289,6 @@ public class Piece {
         System.out.println(validMovesList);
         return validMovesList;
     }
-
     public ArrayList<Integer> bishopMovements() {
         System.out.println("function called");
         ArrayList<Integer> validMovesList = new ArrayList<>(16);
@@ -383,24 +374,22 @@ public class Piece {
             }
         }
     }
-    public int coordsToIndex(String col, String row) {
-        try {
-            int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
-            return (Constants.NUM_REVERSED[Integer.parseInt(row)-1] * 8) - 8 + alphaOffset;
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Not all moves on board");
-            return -1;
+    public boolean iteratorLogic(ArrayList<Integer> arrayList, int index) {
+        if (index != -1) {
+            if (Board.masterBoard[index].piece == null) {
+                arrayList.add(index);
+                return false;
+            } else {
+                if (Board.masterBoard[index].piece.white != this.white) {
+                    arrayList.add(index);
+                    return true;
+                }
+                return true;
+            }
+        } else {
+            return true;
         }
     }
-
-    public boolean isMoved() {
-        return moved;
-    }
-
-    public void setMoved(boolean moved) {
-        this.moved = moved;
-    }
-
     public boolean isWhite() {
         return white;
     }

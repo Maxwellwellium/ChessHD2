@@ -15,9 +15,7 @@ public class Bishop extends Piece {
         }
     }
     public Object[] Movements() {
-        ArrayList<Integer> validMovesList = new ArrayList<>();
-        validMovesList.addAll(bishopMovements());
-
+        ArrayList<Integer> validMovesList = new ArrayList<>(bishopMovements());
         return validMovesList.toArray();
     }
 }

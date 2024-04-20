@@ -1,5 +1,4 @@
 package Chess;
-
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
@@ -9,19 +8,15 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
 import java.util.Vector;
 
 public class Board {
     static Square[] masterBoard = new Square[64];
-
-    JPanel[] imagePieceList = new JPanel[64];
-    JPanel[] imageSelectList = new JPanel[64];
-    JPanel[] imageAttackList = new JPanel[64];
-
     JLabel[] imagePieceLabels = new JLabel[64];
     JLabel[] imageSelectLabels = new JLabel[64];
     JLabel[] imageAttackLabels = new JLabel[64];
-
     Square selectedSquare = null;
     Piece selectedPiece = null;
     int selectedSquareNumber = -1;
@@ -136,7 +131,7 @@ public class Board {
             case "p", "P" -> new Pawn(false, masterBoard[masterIndex]);
             case "q", "Q" -> new Queen(true, masterBoard[masterIndex]);
             case "r", "R" -> new Rook(true, masterBoard[masterIndex]);
-            case null, default -> new Brine(true, masterBoard[masterIndex]);
+            case null, default -> new Brine(false, masterBoard[masterIndex]);
         };
 
         boolean spawned = checkSpawnSquare(piece, masterIndex);
@@ -146,7 +141,6 @@ public class Board {
         imagePieceLabels[masterIndex].setIcon(new ImageIcon(piece.getImage())); // store img differently to refer to dynamically
         System.out.println(piece.getClass() +" created successfully at index " + masterIndex);
     }
-
     public boolean checkSpawnSquare(Piece piece, int masterIndex) {
         if (masterBoard[masterIndex].getPiece() != null) {
             if (masterBoard[masterIndex].getPiece().getClass() == piece.getClass()) {
@@ -161,7 +155,6 @@ public class Board {
         masterBoard[masterIndex].setPiece(piece);
         return true;
     }
-
     public int coordsToIndex(String col, int row) {
         int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
         return (Constants.NUM_REVERSED[row-1] * 8) - 8 + alphaOffset;
@@ -234,7 +227,6 @@ public class Board {
             label.setIcon(null);
         }
     }
-
     public void updateAttack(Piece piece) {
         clearIcons(imageAttackLabels);
         if (selectedPiece != null) {
@@ -280,6 +272,15 @@ public class Board {
         //if in attacklist
         if (imageAttackLabels[newSelectedNumber].getIcon() != null) {
             //piece of new square is now piece moved
+            //brine dodging movement, due to randomness brine has 1/9 chance not to dodge
+            if (masterBoard[newSelectedNumber].piece != null) {
+                if (masterBoard[newSelectedNumber].piece.getClass() == Brine.class) {
+                    int escapeChoice = new Random().nextInt(masterBoard[newSelectedNumber].piece.escapeMovements().size()); //choose escape square
+                    int escapeSquare = (int) masterBoard[newSelectedNumber].piece.escapeMovements().get(escapeChoice);
+                    masterBoard[escapeSquare].piece = masterBoard[newSelectedNumber].piece; //put brine on escape square
+                    imagePieceLabels[escapeSquare].setIcon(new ImageIcon(masterBoard[newSelectedNumber].piece.getImage())); //set brine image
+                }
+            }
             masterBoard[newSelectedNumber].piece = selectedPiece;
             imagePieceLabels[newSelectedNumber].setIcon(new ImageIcon(selectedPiece.getImage()));
             //update square of piece

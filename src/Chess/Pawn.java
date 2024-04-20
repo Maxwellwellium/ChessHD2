@@ -17,9 +17,7 @@ public class Pawn extends Piece {
     }
 
     public Object[] Movements() {
-        ArrayList<Integer> validMovesList = new ArrayList<>();
-        validMovesList.addAll(pawnMovements());
-
+        ArrayList<Integer> validMovesList = new ArrayList<>(pawnMovements());
         return validMovesList.toArray();
     }
 

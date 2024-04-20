@@ -16,9 +16,7 @@ public class Camel extends Piece {
     }
 
     public Object[] Movements() {
-        ArrayList<Integer> validMovesList = new ArrayList<>();
-        validMovesList.addAll(camelMovements());
-
+        ArrayList<Integer> validMovesList = new ArrayList<>(camelMovements());
         return validMovesList.toArray();
     }
 }

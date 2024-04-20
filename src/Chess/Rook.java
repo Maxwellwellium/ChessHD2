@@ -16,9 +16,7 @@ public class Rook extends Piece {
     }
 
     public Object[] Movements() {
-        ArrayList<Integer> validMovesList = new ArrayList<>();
-        validMovesList.addAll(rookMovements());
-
+        ArrayList<Integer> validMovesList = new ArrayList<>(rookMovements());
         return validMovesList.toArray();
     }
 }

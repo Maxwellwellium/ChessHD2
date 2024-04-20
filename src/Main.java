@@ -359,9 +359,6 @@ public class Main extends JFrame{
         screenPause.setBackground(Constants.BLACK);
         screenMain.setBackground(Constants.BLACK);
         add(screenMain);
-        //////////////////////////////////////////////////////////////////////////
-        //board.printMasterBoard();
-
     }
 
     public void universalButtonSetup(JComponent component, JPanel panel) {
@@ -379,8 +376,6 @@ public class Main extends JFrame{
         constraint.insets = new Insets(15, 0, 0, 0); //padding between button
         panel.add(component, constraint); //adds button to panel
     }
-
-
     //addChangeListener made by Boann @ Stackoverflow (https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield)
     public static void addChangeListener(JTextField text, ChangeListener changeListener) {
         Objects.requireNonNull(text);
