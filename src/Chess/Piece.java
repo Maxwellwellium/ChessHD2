@@ -13,7 +13,10 @@ public class Piece {
     boolean white;
     BufferedImage image;
     Square square;
-
+    int lastRow;
+    public int getLastRow() {
+        return lastRow;
+    }
     int classID;
     public int getClassID() {
         return classID;

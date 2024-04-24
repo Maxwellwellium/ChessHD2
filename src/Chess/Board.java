@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Vector;
 
@@ -100,7 +101,11 @@ public class Board {
                         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                             throw new RuntimeException(ex);
                         }
-                        updateSelected(finalSquareNumber, square); // update the selected square
+                        try {
+                            updateSelected(finalSquareNumber, square); // update the selected square
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }});
                 squareNumber += 1;
             }
@@ -119,6 +124,8 @@ public class Board {
         selectedSquare = null;
         selectedPiece = null;
         selectedSquareNumber = -1;
+        playWhite = true;
+        turnLabel.setText("Turn: 0");
         for (Square square : masterBoard) {
             square.setPiece(null);
         }
@@ -223,6 +230,35 @@ public class Board {
             System.out.println(piece.getClass() + " deleted at " + masterIndex);
         }
     }
+
+    public void spawnPiece(String type, int index, boolean color) throws IOException {
+
+        Piece piece = switch (type) {
+            case "a", "A" -> new Amazon(color, masterBoard[index]);
+            case "b", "B" -> new Bishop(color, masterBoard[index]);
+            case "c", "C" -> new Camel(color, masterBoard[index]);
+            case "e", "E" -> new Cameleater(color, masterBoard[index]);
+            case "k", "K" -> new King(color, masterBoard[index]);
+            case "n", "N" -> new Knight(color, masterBoard[index]);
+            case "p", "P" -> new Pawn(color, masterBoard[index]);
+            case "q", "Q" -> new Queen(color, masterBoard[index]);
+            case "r", "R" -> new Rook(color, masterBoard[index]);
+            case null, default -> new Brine(color, masterBoard[index]);
+        };
+
+        boolean exists = checkSpawnSquare(piece, index);
+        if (!exists) {
+            //spawn piece on board
+            masterBoard[index].setPiece(piece);
+            imagePieceLabels[index].setIcon(new ImageIcon(piece.getImage()));
+            System.out.println(piece.getClass() + " created successfully at index " + index);
+        } else {
+            //delete the piece
+            masterBoard[index].setPiece(null);
+            imagePieceLabels[index].setIcon(null);
+            System.out.println(piece.getClass() + " deleted at " + index);
+        }
+    }
     public boolean checkSpawnSquare(Piece piece, int masterIndex) {
         if (masterBoard[masterIndex].getPiece() != null) {
             if (masterBoard[masterIndex].getPiece().getClass() == piece.getClass()) {
@@ -318,7 +354,7 @@ public class Board {
             }
         }
     }
-    public void updateSelected(int newSelectedNumber, Square square) {
+    public void updateSelected(int newSelectedNumber, Square square) throws IOException {
         //if the same square is clicked multiple times, toggle whether it's selected or not
         if (newSelectedNumber == selectedSquareNumber) {
             if (selectedSquareNumber != -1) {
@@ -380,6 +416,13 @@ public class Board {
                 //update square of piece
                 selectedPiece.square = masterBoard[newSelectedNumber];
                 selectedPiece.moved = true;
+            }
+            if ((masterBoard[selectedSquareNumber].piece.getClass() == Pawn.class)) {
+                if ((newSelectedNumber <= 8 && masterBoard[selectedSquareNumber].piece.getLastRow() == 8) ||
+                        (newSelectedNumber >= 56 && masterBoard[selectedSquareNumber].piece.getLastRow() == 1)) {
+                    boolean white = masterBoard[selectedSquareNumber].piece.isWhite();
+                    spawnPiece("q", newSelectedNumber, white);
+                }
             }
             //old squares piece is null
             masterBoard[selectedSquareNumber].piece = null;

@@ -8,6 +8,11 @@ import java.util.Objects;
 
 public class Pawn extends Piece {
     int classID = 8;
+    int lastRow;
+    public int getLastRow() {
+        return lastRow;
+    }
+
     public int getClassID() {
         return classID;
     }
@@ -15,8 +20,10 @@ public class Pawn extends Piece {
         super(white, square);
         if (white) {
             this.image = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/Pieces/White/pawn.png")));
+            lastRow = 8;
         } else {
             this.image = ImageIO.read(Objects.requireNonNull(Constants.class.getResource("/Assets/Pieces/Black/pawn.png")));
+            lastRow = 1;
         }
     }
 

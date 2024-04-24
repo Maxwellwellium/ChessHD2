@@ -136,7 +136,6 @@ public class Main extends JFrame{
         board.getTurnLabel().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                System.out.println("running");
                 boolean newState = !Board.isPlayWhite();
                 if (newState) {
                     gamePlayFlip_label.setText("Black to Play");
