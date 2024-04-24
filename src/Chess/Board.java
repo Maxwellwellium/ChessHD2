@@ -36,7 +36,7 @@ public class Board {
     public static boolean isPlayWhite() {
         return playWhite;
     }
-    public void setPlayWhite(boolean playWhite) {
+    public static void setPlayWhite(boolean playWhite) {
         Board.playWhite = playWhite;
     }
     public static Square[] getMasterBoard() {
@@ -100,9 +100,7 @@ public class Board {
                         } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                             throw new RuntimeException(ex);
                         }
-
                         updateSelected(finalSquareNumber, square); // update the selected square
-
                     }});
                 squareNumber += 1;
             }

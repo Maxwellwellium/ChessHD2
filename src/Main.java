@@ -123,6 +123,7 @@ public class Main extends JFrame{
                     throw new RuntimeException(ex);
                 }
                 boolean newState = !Board.isPlayWhite(); //toggles
+                Board.setPlayWhite(!Board.isPlayWhite());
                 if (newState) {
                     gamePlayFlip_label.setText("White to Play");
                     gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
