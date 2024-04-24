@@ -22,7 +22,10 @@ public class Queen extends Piece {
         ArrayList<Integer> validMovesList = new ArrayList<>();
         validMovesList.addAll(rookMovements());
         validMovesList.addAll(bishopMovements());
-
+        //no moves if it's not the piece's turn
+        if (this.white != Board.isPlayWhite()) {
+            validMovesList.clear();
+        }
         return validMovesList.toArray();
     }
 }

@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
@@ -102,14 +103,15 @@ public class Main extends JFrame{
         JButton gameGenNew_button = new JButton("Clear Board"); //generates a new blank chess board
         JButton gameGenReg_button = new JButton("Set Chess Board"); //generates a new regular chess board
 
-        JButton gamePlayFlip_button = new JButton(); //generates a new regular chess board
-        JButton gameGenFlip_button = new JButton(); //generates a new regular chess board
+        JButton gamePlayFlip_button = new JButton(); //flips which side's turn it is
+        JButton gameGenFlip_button = new JButton(); //flips which side's pieces are generated
         gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
         gameGenFlip_button.setIcon(new ImageIcon(trueIMG));
         JLabel gamePlayFlip_label = new JLabel("White to Play");
         JLabel gameGenFlip_label = new JLabel("Generate White");
         JPanel gamePlayFlip_panel = new JPanel(new GridBagLayout());
         JPanel gameGenFlip_panel = new JPanel(new GridBagLayout());
+        JLabel gameTurnCounter = new JLabel("Turn 0");
 
         gamePlayFlip_button.addActionListener(new ActionListener() {
             @Override
@@ -120,10 +122,22 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-                boolean newState = !board.isPlayWhite(); //toggles
-                board.setPlayWhite(newState);
-
+                boolean newState = !Board.isPlayWhite(); //toggles
                 if (newState) {
+                    gamePlayFlip_label.setText("White to Play");
+                    gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
+                } else {
+                    gamePlayFlip_label.setText("Black to Play");
+                    gamePlayFlip_button.setIcon(new ImageIcon(falseIMG));
+                }
+            }
+        });
+        board.getTurnLabel().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                boolean newState = !Board.isPlayWhite();
+                if (newState) {
+                    gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
                     gamePlayFlip_label.setText("White to Play");
                     gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
                 } else {
@@ -171,6 +185,8 @@ public class Main extends JFrame{
         flipButtonSetup(gameGenFlip_button, gameGenFlip_panel);
         flipButtonSetup(gamePlayFlip_label, gamePlayFlip_panel);
         flipButtonSetup(gameGenFlip_label, gameGenFlip_panel);
+
+        universalButtonSetup(board.getTurnLabel(), gameButtons);
         universalButtonSetup(gamePlayFlip_panel, gameButtons);
         universalButtonSetup(gameGenFlip_panel, gameButtons);
         gamePlayFlip_panel.setBackground(Constants.BLACK); //override universal color
@@ -179,7 +195,6 @@ public class Main extends JFrame{
         universalButtonSetup(gameGenNew_button, gameButtons);
         universalButtonSetup(gameGenReg_button, gameButtons);
         universalButtonSetup(gameBack_button, gameButtons);
-
 
         addChangeListener(gameEnterPiece, e -> {
             try {
@@ -432,7 +447,6 @@ public class Main extends JFrame{
         component.setMaximumSize(new Dimension(350, 80));
         component.setPreferredSize(new Dimension(350, 80)); //sets button size
         component.setFont(new Font("Constantia", Font.BOLD, 30)); //sets button font
-
         //sets button placement constraints within button JPanel
         GridBagConstraints constraint = new GridBagConstraints();
         constraint.gridx = 0; //button placement aligned with leftmost column
@@ -440,7 +454,6 @@ public class Main extends JFrame{
         constraint.insets = new Insets(15, 0, 0, 0); //padding between button
         panel.add(component, constraint); //adds button to panel
     }
-
     public void flipButtonSetup(JButton component, JPanel panel) {
         component.setBackground(Constants.BLACK); //sets button background color
         component.setForeground(Constants.WHITE); //set button font color
@@ -475,7 +488,6 @@ public class Main extends JFrame{
         constraint.insets = new Insets(15, 15, 0, 0); //padding between button
         panel.add(label, constraint); //adds button to panel
     }
-
     //addChangeListener made by Boann @ Stackoverflow (https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield)
     public static void addChangeListener(JTextField text, ChangeListener changeListener) {
         Objects.requireNonNull(text);
@@ -514,7 +526,6 @@ public class Main extends JFrame{
         Document d = text.getDocument();
         if (d != null) d.addDocumentListener(dl);
     }
-
     public static void main(String[] args) throws IOException {
         Main main = new Main();
         main.setVisible(true);

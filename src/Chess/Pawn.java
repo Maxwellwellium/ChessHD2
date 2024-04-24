@@ -22,6 +22,10 @@ public class Pawn extends Piece {
 
     public Object[] Movements() {
         ArrayList<Integer> validMovesList = new ArrayList<>(pawnMovements());
+        //no moves if it's not the piece's turn
+        if (this.white != Board.isPlayWhite()) {
+            validMovesList.clear();
+        }
         return validMovesList.toArray();
     }
 

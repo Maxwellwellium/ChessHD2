@@ -20,18 +20,24 @@ public class Board {
     Piece selectedPiece = null;
     int selectedSquareNumber = -1;
     boolean genWhite = true;
-    boolean playWhite = true;
+    static boolean playWhite = true;
+    public int turn = 0;
+    JLabel turnLabel = new JLabel();
+    public JLabel getTurnLabel() {
+        return turnLabel;
+    }
+
     public boolean isGenWhite() {
         return genWhite;
     }
     public void setGenWhite(boolean genWhite) {
         this.genWhite = genWhite;
     }
-    public boolean isPlayWhite() {
+    public static boolean isPlayWhite() {
         return playWhite;
     }
     public void setPlayWhite(boolean playWhite) {
-        this.playWhite = playWhite;
+        Board.playWhite = playWhite;
     }
     public static Square[] getMasterBoard() {
         return masterBoard;
@@ -96,6 +102,7 @@ public class Board {
                         }
 
                         updateSelected(finalSquareNumber, square); // update the selected square
+
                     }});
                 squareNumber += 1;
             }
@@ -151,25 +158,25 @@ public class Board {
             }
             System.out.println("Placing piece at coords");
 
-            spawnPiece(piece, column, Integer.parseInt(row), true);
+            spawnPiece(piece, column, Integer.parseInt(row));
             return true;
         }
         return false;
     }
-    public void spawnPiece(String type, String col, int row, boolean white) throws IOException {
+    public void spawnPiece(String type, String col, int row) throws IOException {
         int masterIndex = coordsToIndex(col, row);
 
         Piece piece = switch (type) {
-            case "a", "A" -> new Amazon(true, masterBoard[masterIndex]);
-            case "b", "B" -> new Bishop(true, masterBoard[masterIndex]);
-            case "c", "C" -> new Camel(true, masterBoard[masterIndex]);
-            case "e", "E" -> new Cameleater(false, masterBoard[masterIndex]);
-            case "k", "K" -> new King(true, masterBoard[masterIndex]);
-            case "n", "N" -> new Knight(true, masterBoard[masterIndex]);
-            case "p", "P" -> new Pawn(true, masterBoard[masterIndex]);
-            case "q", "Q" -> new Queen(true, masterBoard[masterIndex]);
-            case "r", "R" -> new Rook(true, masterBoard[masterIndex]);
-            case null, default -> new Brine(false, masterBoard[masterIndex]);
+            case "a", "A" -> new Amazon(genWhite, masterBoard[masterIndex]);
+            case "b", "B" -> new Bishop(genWhite, masterBoard[masterIndex]);
+            case "c", "C" -> new Camel(genWhite, masterBoard[masterIndex]);
+            case "e", "E" -> new Cameleater(genWhite, masterBoard[masterIndex]);
+            case "k", "K" -> new King(genWhite, masterBoard[masterIndex]);
+            case "n", "N" -> new Knight(genWhite, masterBoard[masterIndex]);
+            case "p", "P" -> new Pawn(genWhite, masterBoard[masterIndex]);
+            case "q", "Q" -> new Queen(genWhite, masterBoard[masterIndex]);
+            case "r", "R" -> new Rook(genWhite, masterBoard[masterIndex]);
+            case null, default -> new Brine(genWhite, masterBoard[masterIndex]);
         };
 
         boolean exists = checkSpawnSquare(piece, masterIndex);
@@ -187,7 +194,9 @@ public class Board {
     }
     public boolean checkSpawnSquare(Piece piece, int masterIndex) {
         if (masterBoard[masterIndex].getPiece() != null) {
-            return masterBoard[masterIndex].getPiece().getClass() == piece.getClass();
+            if (masterBoard[masterIndex].getPiece().getClass() == piece.getClass()) {
+                return masterBoard[masterIndex].getPiece().isWhite() == piece.isWhite();
+            }
         }
         return false;
     }
@@ -293,10 +302,10 @@ public class Board {
                 //reselects the square
                 imageSelectLabels[newSelectedNumber].setIcon(new ImageIcon(Constants.selectIMG)); //set icon of new selected square
                 selectedSquare = square; //update variables
-                selectedPiece = selectedSquare.piece; //deselect piece
+                selectedPiece = selectedSquare.piece; //select piece
                 updateAttack(selectedPiece); //update valid moves overlay
                 selectedSquareNumber = newSelectedNumber; //update variables
-                System.out.println("Selected " +selectedSquare.col+selectedSquare.row);
+                System.out.println("Selected " + selectedSquare.col + selectedSquare.row);
             }
             return;
         }
@@ -316,7 +325,7 @@ public class Board {
                     captureSound(masterBoard[selectedSquareNumber], masterBoard[newSelectedNumber], !(escapeSquare == selectedSquareNumber));
                     masterBoard[escapeSquare].piece = masterBoard[newSelectedNumber].piece; //put brine on escape square
                     imagePieceLabels[escapeSquare].setIcon(new ImageIcon(masterBoard[newSelectedNumber].piece.getImage())); //set brine image
-                }
+                    }
 
                 //cameleater logic
                 if ((masterBoard[selectedSquareNumber].piece.getClass() == Knight.class
@@ -353,6 +362,9 @@ public class Board {
             updateAttack(selectedPiece);
             clearIcons(imageAttackLabels);
             System.out.println("Piece moved, Square unselected");
+            turn += 1;
+            turnLabel.setText("Turn: " + turn);
+            playWhite = !playWhite;
 
         } else {
             //if not in attacklist
@@ -364,7 +376,6 @@ public class Board {
             System.out.println("Selected " + selectedSquare.col + selectedSquare.row);
         }
     }
-
     public void captureSound(Square startSquare, Square endSquare, boolean briney) {
         SoundPlayer soundPlayer = new SoundPlayer();
         String soundFile = "Assets/defaultcapture.wav";

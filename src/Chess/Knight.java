@@ -21,6 +21,10 @@ public class Knight extends Piece {
 
     public Object[] Movements() {
         ArrayList<Integer> validMovesList = new ArrayList<>(knightMovements());
+        //no moves if it's not the piece's turn
+        if (this.white != Board.isPlayWhite()) {
+            validMovesList.clear();
+        }
         return validMovesList.toArray();
     }
 }

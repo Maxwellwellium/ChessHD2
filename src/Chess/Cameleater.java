@@ -22,7 +22,10 @@ public class Cameleater extends Piece {
         ArrayList<Integer> validMovesList = new ArrayList<>();
         validMovesList.addAll(camelMovements());
         validMovesList.addAll(knightMovements());
-
+        //no moves if it's not the piece's turn
+        if (this.white != Board.isPlayWhite()) {
+            validMovesList.clear();
+        }
         return validMovesList.toArray();
     }
 }

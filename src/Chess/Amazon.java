@@ -23,7 +23,10 @@ public class Amazon extends Piece {
         validMovesList.addAll(rookMovements());
         validMovesList.addAll(bishopMovements());
         validMovesList.addAll(knightMovements());
-
+        //no moves if it's not the piece's turn
+        if (this.white != Board.isPlayWhite()) {
+            validMovesList.clear();
+        }
         return validMovesList.toArray();
     }
 }
