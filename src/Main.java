@@ -135,14 +135,14 @@ public class Main extends JFrame{
         board.getTurnLabel().addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
+                System.out.println("running");
                 boolean newState = !Board.isPlayWhite();
                 if (newState) {
-                    gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
-                    gamePlayFlip_label.setText("White to Play");
-                    gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
-                } else {
                     gamePlayFlip_label.setText("Black to Play");
                     gamePlayFlip_button.setIcon(new ImageIcon(falseIMG));
+                } else {
+                    gamePlayFlip_label.setText("White to Play");
+                    gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
                 }
             }
         });
@@ -374,7 +374,11 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-                //reset board as regular chess
+                try {
+                    board.setBoard(true);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
         ////////////////////////////////////////////////////////////////

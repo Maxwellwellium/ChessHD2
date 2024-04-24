@@ -22,7 +22,7 @@ public class Board {
     boolean genWhite = true;
     static boolean playWhite = true;
     public int turn = 0;
-    JLabel turnLabel = new JLabel();
+    JLabel turnLabel = new JLabel("Turn 0");
     public JLabel getTurnLabel() {
         return turnLabel;
     }
@@ -129,10 +129,43 @@ public class Board {
         clearIcons(imageSelectLabels);
         System.out.println("Board cleared");
     }
-    public void setBoard(boolean regular) {
+    public void setBoard(boolean regular) throws IOException {
         resetBoard();
-        //spawnPiece();
 
+        //BLACK SIDE
+        //pawns
+        for (String s : Constants.ALPHA) {
+            spawnPiece("p", s, 7, false);
+        }
+        //rooks
+        spawnPiece("r", "a", 8, false);
+        spawnPiece("r", "h", 8, false);
+        //knights
+        spawnPiece("n", "b", 8, false);
+        spawnPiece("n", "g", 8, false);
+        //bishops
+        spawnPiece("b", "c", 8, false);
+        spawnPiece("b", "f", 8, false);
+        //queen and king
+        spawnPiece("q", "d", 8, false);
+        spawnPiece("k", "e", 8, false);
+        //WHITE SIDE
+        //pawns
+        for (String s : Constants.ALPHA) {
+            spawnPiece("p", s, 2, true);
+        }
+        //rooks
+        spawnPiece("r", "a", 1, true);
+        spawnPiece("r", "h", 1, true);
+        //knights
+        spawnPiece("n", "b", 1, true);
+        spawnPiece("n", "g", 1, true);
+        //bishops
+        spawnPiece("b", "c", 1, true);
+        spawnPiece("b", "f", 1, true);
+        //queen and king
+        spawnPiece("q", "d", 1, true);
+        spawnPiece("k", "e", 1, true);
     }
     public void setBoard() {
 
@@ -158,25 +191,25 @@ public class Board {
             }
             System.out.println("Placing piece at coords");
 
-            spawnPiece(piece, column, Integer.parseInt(row));
+            spawnPiece(piece, column, Integer.parseInt(row), genWhite);
             return true;
         }
         return false;
     }
-    public void spawnPiece(String type, String col, int row) throws IOException {
+    public void spawnPiece(String type, String col, int row, boolean color) throws IOException {
         int masterIndex = coordsToIndex(col, row);
 
         Piece piece = switch (type) {
-            case "a", "A" -> new Amazon(genWhite, masterBoard[masterIndex]);
-            case "b", "B" -> new Bishop(genWhite, masterBoard[masterIndex]);
-            case "c", "C" -> new Camel(genWhite, masterBoard[masterIndex]);
-            case "e", "E" -> new Cameleater(genWhite, masterBoard[masterIndex]);
-            case "k", "K" -> new King(genWhite, masterBoard[masterIndex]);
-            case "n", "N" -> new Knight(genWhite, masterBoard[masterIndex]);
-            case "p", "P" -> new Pawn(genWhite, masterBoard[masterIndex]);
-            case "q", "Q" -> new Queen(genWhite, masterBoard[masterIndex]);
-            case "r", "R" -> new Rook(genWhite, masterBoard[masterIndex]);
-            case null, default -> new Brine(genWhite, masterBoard[masterIndex]);
+            case "a", "A" -> new Amazon(color, masterBoard[masterIndex]);
+            case "b", "B" -> new Bishop(color, masterBoard[masterIndex]);
+            case "c", "C" -> new Camel(color, masterBoard[masterIndex]);
+            case "e", "E" -> new Cameleater(color, masterBoard[masterIndex]);
+            case "k", "K" -> new King(color, masterBoard[masterIndex]);
+            case "n", "N" -> new Knight(color, masterBoard[masterIndex]);
+            case "p", "P" -> new Pawn(color, masterBoard[masterIndex]);
+            case "q", "Q" -> new Queen(color, masterBoard[masterIndex]);
+            case "r", "R" -> new Rook(color, masterBoard[masterIndex]);
+            case null, default -> new Brine(color, masterBoard[masterIndex]);
         };
 
         boolean exists = checkSpawnSquare(piece, masterIndex);
@@ -362,9 +395,10 @@ public class Board {
             updateAttack(selectedPiece);
             clearIcons(imageAttackLabels);
             System.out.println("Piece moved, Square unselected");
+            playWhite = !playWhite;
             turn += 1;
             turnLabel.setText("Turn: " + turn);
-            playWhite = !playWhite;
+            //playWhite = !playWhite;
 
         } else {
             //if not in attacklist
