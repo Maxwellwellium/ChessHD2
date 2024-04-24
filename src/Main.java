@@ -52,6 +52,8 @@ public class Main extends JFrame{
         BufferedImage I_background = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/background.png")));
         BufferedImage I_logo = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/logo.png")));
         BufferedImage I_bishop = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/bishop.png")));
+        BufferedImage trueIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/true.png")));
+        BufferedImage falseIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/false.png")));
         // MAJOR UI ELEMENTS
         JPanel screenMain = new JPanel(new GridBagLayout()) {
             @Override
@@ -75,7 +77,6 @@ public class Main extends JFrame{
         };
 
         JLayeredPane gameBoard = board.draw_board();
-        //JPanel gameBoard = board.draw_board();
 
         // BUTTON PANELS
         JPanel mainButtons = new JPanel(new GridBagLayout());
@@ -98,8 +99,61 @@ public class Main extends JFrame{
         JButton pauseQuit_button = new JButton("Quit Game"); //quits application
 
         JButton gameBack_button = new JButton("Settings"); //sends player to pause screen
-        JButton gameGenNew_button = new JButton("Generate Blank Pieces.Board"); //generates a new blank chess board
-        JButton gameGenReg_button = new JButton("Generate Chess Pieces.Board"); //generates a new regular chess board
+        JButton gameGenNew_button = new JButton("Clear Board"); //generates a new blank chess board
+        JButton gameGenReg_button = new JButton("Set Chess Board"); //generates a new regular chess board
+
+        JButton gamePlayFlip_button = new JButton(); //generates a new regular chess board
+        JButton gameGenFlip_button = new JButton(); //generates a new regular chess board
+        gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
+        gameGenFlip_button.setIcon(new ImageIcon(trueIMG));
+        JLabel gamePlayFlip_label = new JLabel("White to Play");
+        JLabel gameGenFlip_label = new JLabel("Generate White");
+        JPanel gamePlayFlip_panel = new JPanel(new GridBagLayout());
+        JPanel gameGenFlip_panel = new JPanel(new GridBagLayout());
+
+        gamePlayFlip_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Play Sound
+                try {
+                    soundPlayer.playSound("Assets/menuSwitch.wav", false);
+                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                    throw new RuntimeException(ex);
+                }
+                boolean newState = !board.isPlayWhite(); //toggles
+                board.setPlayWhite(newState);
+
+                if (newState) {
+                    gamePlayFlip_label.setText("White to Play");
+                    gamePlayFlip_button.setIcon(new ImageIcon(trueIMG));
+                } else {
+                    gamePlayFlip_label.setText("Black to Play");
+                    gamePlayFlip_button.setIcon(new ImageIcon(falseIMG));
+                }
+            }
+        });
+        gameGenFlip_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Play Sound
+                try {
+                    soundPlayer.playSound("Assets/menuSwitch.wav", false);
+                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                    throw new RuntimeException(ex);
+                }
+                boolean newState = !board.isGenWhite(); //toggles
+                board.setGenWhite(newState);
+
+                if (newState) {
+                    gameGenFlip_label.setText("Generate White");
+                    gameGenFlip_button.setIcon(new ImageIcon(trueIMG));
+                } else {
+                    gameGenFlip_label.setText("Generate Black");
+                    gameGenFlip_button.setIcon(new ImageIcon(falseIMG));
+                }
+            }
+        });
+
 
         JFormattedTextField gameEnterPiece = new JFormattedTextField();
 
@@ -113,14 +167,26 @@ public class Main extends JFrame{
         pauseBackGame_button.setEnabled(false); //starts unselected
         universalButtonSetup(pauseBackMenu_button, pauseButtons);
         universalButtonSetup(pauseQuit_button, pauseButtons);
+        flipButtonSetup(gamePlayFlip_button, gamePlayFlip_panel);
+        flipButtonSetup(gameGenFlip_button, gameGenFlip_panel);
+        flipButtonSetup(gamePlayFlip_label, gamePlayFlip_panel);
+        flipButtonSetup(gameGenFlip_label, gameGenFlip_panel);
+        universalButtonSetup(gamePlayFlip_panel, gameButtons);
+        universalButtonSetup(gameGenFlip_panel, gameButtons);
+        gamePlayFlip_panel.setBackground(Constants.BLACK); //override universal color
+        gameGenFlip_panel.setBackground(Constants.BLACK); //override universal color
         universalButtonSetup(gameEnterPiece, gameButtons);
         universalButtonSetup(gameGenNew_button, gameButtons);
         universalButtonSetup(gameGenReg_button, gameButtons);
         universalButtonSetup(gameBack_button, gameButtons);
 
+
         addChangeListener(gameEnterPiece, e -> {
             try {
-                board.determineInput(gameEnterPiece.getText());
+                boolean reset = board.determineInput(gameEnterPiece.getText());
+                if (reset) {
+                    gameEnterPiece.setText(null); //reset text after successful input
+                }
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -136,15 +202,13 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-
-                //function that resets board for future
-
+                //resets board for new game
+                board.resetBoard();
                 remove(screenMain);
                 add(screenGame);
                 revalidate();
                 repaint();
-
-                //enable ability to resume game
+                //enable ability to resume current game
                 mainResume_button.setEnabled(true);
                 pauseBackGame_button.setEnabled(true);
             }
@@ -281,7 +345,7 @@ public class Main extends JFrame{
                 } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 }
-                //reset board as blank
+                board.resetBoard();
             }
         });
         ////////////////////////////////////////////////////////////////
@@ -376,6 +440,42 @@ public class Main extends JFrame{
         constraint.insets = new Insets(15, 0, 0, 0); //padding between button
         panel.add(component, constraint); //adds button to panel
     }
+
+    public void flipButtonSetup(JButton component, JPanel panel) {
+        component.setBackground(Constants.BLACK); //sets button background color
+        component.setForeground(Constants.WHITE); //set button font color
+        component.setMinimumSize(new Dimension(40, 20));
+        component.setMaximumSize(new Dimension(40, 20));
+        component.setPreferredSize(new Dimension(40, 20)); //sets button size
+        component.setFont(new Font("Constantia", Font.BOLD, 30)); //sets button font
+        component.setBorderPainted(false);
+        component.setFocusPainted(false);
+        component.setContentAreaFilled(false);
+        component.setIconTextGap(0);
+
+        //sets button placement constraints within button JPanel
+        GridBagConstraints constraint = new GridBagConstraints();
+        constraint.gridx = 0; //button placement aligned with leftmost column
+        constraint.gridy = GridBagConstraints.RELATIVE; //button placement aligned underneath previous button
+        constraint.insets = new Insets(30, 0, 30, 0); //padding between button
+        panel.add(component, constraint); //adds button to panel
+    }
+    public void flipButtonSetup(JLabel label, JPanel panel) {
+        label.setBackground(Constants.BLACK); //sets button background color
+        label.setForeground(Constants.WHITE); //set button font color
+        label.setMinimumSize(new Dimension(230, 80));
+        label.setMaximumSize(new Dimension(230, 80));
+        label.setPreferredSize(new Dimension(230, 80)); //sets button size
+        label.setFont(new Font("Constantia", Font.BOLD, 30)); //sets button font
+
+        //sets button placement constraints within button JPanel
+        GridBagConstraints constraint = new GridBagConstraints();
+        constraint.gridx = GridBagConstraints.RELATIVE; //button placement aligned with leftmost column
+        constraint.gridy = 0; //button placement aligned underneath previous button
+        constraint.insets = new Insets(15, 15, 0, 0); //padding between button
+        panel.add(label, constraint); //adds button to panel
+    }
+
     //addChangeListener made by Boann @ Stackoverflow (https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield)
     public static void addChangeListener(JTextField text, ChangeListener changeListener) {
         Objects.requireNonNull(text);

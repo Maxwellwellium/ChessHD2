@@ -19,12 +19,25 @@ public class Board {
     Square selectedSquare = null;
     Piece selectedPiece = null;
     int selectedSquareNumber = -1;
-
+    boolean genWhite = true;
+    boolean playWhite = true;
+    public boolean isGenWhite() {
+        return genWhite;
+    }
+    public void setGenWhite(boolean genWhite) {
+        this.genWhite = genWhite;
+    }
+    public boolean isPlayWhite() {
+        return playWhite;
+    }
+    public void setPlayWhite(boolean playWhite) {
+        this.playWhite = playWhite;
+    }
     public static Square[] getMasterBoard() {
         return masterBoard;
     }
     public void setMasterBoard(Square[] masterBoard) {
-        this.masterBoard = masterBoard;
+        Board.masterBoard = masterBoard;
     }
     public void printMasterBoard() {
         for (Square square : masterBoard) {
@@ -96,28 +109,54 @@ public class Board {
         gameBoard.add(checkerBoard, 4);
         return gameBoard;
     }
-    public void determineInput(String string) throws IOException {
+
+    public void resetBoard() {
+        selectedSquare = null;
+        selectedPiece = null;
+        selectedSquareNumber = -1;
+        for (Square square : masterBoard) {
+            square.setPiece(null);
+        }
+        clearIcons(imageAttackLabels);
+        clearIcons(imagePieceLabels);
+        clearIcons(imageSelectLabels);
+        System.out.println("Board cleared");
+    }
+    public void setBoard(boolean regular) {
+        resetBoard();
+        //spawnPiece();
+
+    }
+    public void setBoard() {
+
+    }
+    public boolean determineInput(String string) throws IOException {
         char[] inputs = string.toCharArray();
 
         if (string.length() == 3) {
-            if (!(Arrays.asList(Constants.PIECES).contains(String.valueOf(inputs[0])))) {
+            String piece = String.valueOf(inputs[0]).toLowerCase();
+            String column = String.valueOf(inputs[1]).toLowerCase();
+            String row = String.valueOf(inputs[2]).toLowerCase();
+            if (!(Arrays.asList(Constants.PIECES).contains(piece))) {
                 System.out.println("Piece Not Recognized!");
-                return;
+                return false;
             }
-            if (!(Arrays.asList(Constants.ALPHA).contains(String.valueOf(inputs[1])))) {
+            if (!(Arrays.asList(Constants.ALPHA).contains(column))) {
                 System.out.println("Not a Valid File!");
-                return;
+                return false;
             }
-            if (!(Arrays.asList(Constants.NUMSTRING).contains(String.valueOf(inputs[2])))) {
+            if (!(Arrays.asList(Constants.NUMSTRING).contains(row))) {
                 System.out.println("Not a Valid Rank!");
-                return;
+                return false;
             }
             System.out.println("Placing piece at coords");
 
-            spawnPiece(String.valueOf(inputs[0]), String.valueOf(inputs[1]), Integer.parseInt(String.valueOf(inputs[2])));
+            spawnPiece(piece, column, Integer.parseInt(row), true);
+            return true;
         }
+        return false;
     }
-    public void spawnPiece(String type, String col, int row) throws IOException {
+    public void spawnPiece(String type, String col, int row, boolean white) throws IOException {
         int masterIndex = coordsToIndex(col, row);
 
         Piece piece = switch (type) {
@@ -133,26 +172,24 @@ public class Board {
             case null, default -> new Brine(false, masterBoard[masterIndex]);
         };
 
-        boolean spawned = checkSpawnSquare(piece, masterIndex);
-        //have reset attacklabels
-        masterBoard[masterIndex].setPiece(piece); //in future check if piece is here
-
-        imagePieceLabels[masterIndex].setIcon(new ImageIcon(piece.getImage())); // store img differently to refer to dynamically
-        System.out.println(piece.getClass() +" created successfully at index " + masterIndex);
+        boolean exists = checkSpawnSquare(piece, masterIndex);
+        if (!exists) {
+            //spawn piece on board
+            masterBoard[masterIndex].setPiece(piece);
+            imagePieceLabels[masterIndex].setIcon(new ImageIcon(piece.getImage()));
+            System.out.println(piece.getClass() + " created successfully at index " + masterIndex);
+        } else {
+            //delete the piece
+            masterBoard[masterIndex].setPiece(null);
+            imagePieceLabels[masterIndex].setIcon(null);
+            System.out.println(piece.getClass() + " deleted at " + masterIndex);
+        }
     }
     public boolean checkSpawnSquare(Piece piece, int masterIndex) {
         if (masterBoard[masterIndex].getPiece() != null) {
-            if (masterBoard[masterIndex].getPiece().getClass() == piece.getClass()) {
-                //delete the piece if exists on square
-                masterBoard[masterIndex].setPiece(null);
-                imagePieceLabels[masterIndex].setIcon(null);
-                return false;
-            }
-            //override previous piece
-            //masterBoard[masterIndex].setPiece(piece);
+            return masterBoard[masterIndex].getPiece().getClass() == piece.getClass();
         }
-        masterBoard[masterIndex].setPiece(piece);
-        return true;
+        return false;
     }
     public int coordsToIndex(String col, int row) {
         int alphaOffset = Arrays.asList(Constants.ALPHA).indexOf(col);
@@ -407,13 +444,13 @@ public class Board {
                     //case 2 -> "Assets/defaultcapture.wav"; // Queen
                     //case 3 -> "Assets/defaultcapture.wav"; // Rook
                     //case 4 -> "Assets/defaultcapture.wav"; // Camel Eater
-                    //case 5 -> "Assets/defaultcapture.wav"; // Camel
-                    //case 6 -> "Assets/defaultcapture.wav"; // Knight
+                    case 5 -> "Assets/cameleater_eats.wav"; // Camel
+                    case 6 -> "Assets/cameleater_eats.wav"; // Knight
                     //case 7 -> "Assets/defaultcapture.wav"; // Bishop
                     //case 8 -> "Assets/defaultcapture.wav"; // Pawn
                     case 9 -> { // Brine
                         if (briney) {yield "Assets/dodgesuccess.wav";}
-                        else { yield "Assets/dodgefail.wav";}}
+                        else { yield "Assets/cameleater_eats.wav";}}
                     default -> "Assets/defaultcapture.wav";
                 };
             } else if (capturer.getClass() == Camel.class) {
