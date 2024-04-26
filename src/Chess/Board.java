@@ -134,9 +134,242 @@ public class Board {
         clearIcons(imageSelectLabels);
         System.out.println("Board cleared");
     }
-    public void setBoard(boolean regular) throws IOException {
+    public void setBoard(int challenge) throws IOException {
         resetBoard();
 
+        if (challenge == 0) {
+            setBoard();
+        } else if (challenge == 1) { //sixteen pawns
+            setBoard();
+            //BLACK SIDE
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 6, false);
+            }
+            //WHITE SIDE
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 3, false);
+            }
+        } else if (challenge == 2) { //skirmish
+            //BLACK SIDE
+
+            //rooks
+            spawnPiece("r", "a", 8, false);
+            spawnPiece("r", "h", 8, false);
+            spawnPiece("c", "b", 8, false);
+            spawnPiece("n", "f", 8, false);
+
+            spawnPiece("k", "e", 8, false);
+
+            spawnPiece("p", "a", 5, false);
+            spawnPiece("p", "c", 5, false);
+            spawnPiece("p", "e", 5, false);
+            spawnPiece("p", "g", 5, false);
+
+            spawnPiece("p", "b", 4, false);
+            spawnPiece("p", "d", 4, false);
+            spawnPiece("p", "f", 4, false);
+            spawnPiece("p", "h", 4, false);
+
+            //WHITE SIDE
+            //pawns
+            spawnPiece("p", "a", 4, true);
+            spawnPiece("p", "c", 4, true);
+            spawnPiece("p", "e", 4, true);
+            spawnPiece("p", "g", 4, true);
+
+            spawnPiece("p", "b", 3, true);
+            spawnPiece("p", "d", 3, true);
+            spawnPiece("p", "f", 3, true);
+            spawnPiece("p", "h", 3, true);
+            //rooks
+            spawnPiece("r", "a", 1, true);
+            spawnPiece("r", "h", 1, true);
+
+            spawnPiece("c", "b", 2, true);
+            spawnPiece("n", "f", 2, true);
+
+
+            spawnPiece("k", "e", 1, true);
+
+
+        } else if (challenge == 3) { //pawn endgame
+            //BLACK SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 7, false);
+            }
+            spawnPiece("k", "e", 8, false);
+            //WHITE SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 2, true);
+            }
+            spawnPiece("k", "e", 1, true);
+        } else if (challenge == 4) { //corner rook
+            //BLACK SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 6, false);
+            }
+            //rooks
+            spawnPiece("r", "a", 8, false);
+            spawnPiece("r", "h", 8, false);
+            //knights
+            spawnPiece("n", "b", 7, false);
+            spawnPiece("n", "g", 7, false);
+            //bishops
+            spawnPiece("b", "c", 7, false);
+            spawnPiece("b", "f", 7, false);
+            //queen and king
+            spawnPiece("a", "d", 7, false);
+            spawnPiece("k", "e", 7, false);
+
+            //WHITE SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 3, true);
+            }
+            //rooks
+            spawnPiece("r", "a", 1, true);
+            spawnPiece("r", "h", 1, true);
+            //knights
+            spawnPiece("n", "b", 2, true);
+            spawnPiece("n", "g", 2, true);
+            //bishops
+            spawnPiece("b", "c", 2, true);
+            spawnPiece("b", "f", 2, true);
+            //queen and king
+            spawnPiece("a", "d", 2, true);
+            spawnPiece("k", "e", 2, true);
+
+        } else if (challenge == 5) { //cameleater
+            setBoard();
+            //BLACK SIDE
+            spawnPiece("a", "d", 8, false);
+            spawnPiece("e", "b", 8, false);
+            spawnPiece("e", "g", 8, false);
+
+            //WHITE SIDE
+            spawnPiece("c", "b", 1, true);
+            spawnPiece("c", "g", 1, true);
+        } else if (challenge == 6) { //sittuyin
+
+            //BLACK SIDE
+            //pawns
+            spawnPiece("p", "a", 5, false);
+            spawnPiece("p", "b", 5, false);
+            spawnPiece("p", "c", 5, false);
+            spawnPiece("p", "d", 5, false);
+
+            spawnPiece("p", "e", 6, false);
+            spawnPiece("p", "f", 6, false);
+            spawnPiece("p", "g", 6, false);
+            spawnPiece("p", "h", 6, false);
+
+            spawnPiece("e", "a", 8, false);
+            spawnPiece("k", "b", 7, false);
+            spawnPiece("n", "c", 7, false);
+            spawnPiece("n", "c", 6, false);
+
+            spawnPiece("b", "b", 6, false);
+            spawnPiece("b", "e", 7, false);
+
+            spawnPiece("q", "d", 6, false);
+            spawnPiece("r", "d", 8, false);
+            spawnPiece("r", "e", 8, false);
+
+            //WHITE SIDE
+            //pawns
+            spawnPiece("p", "a", 3, true);
+            spawnPiece("p", "b", 3, true);
+            spawnPiece("p", "c", 3, true);
+            spawnPiece("p", "d", 3, true);
+
+            spawnPiece("p", "e", 4, true);
+            spawnPiece("p", "f", 4, true);
+            spawnPiece("p", "g", 4, true);
+            spawnPiece("p", "h", 4, true);
+
+            spawnPiece("q", "e", 3, true);
+            spawnPiece("b", "f", 3, true);
+            spawnPiece("b", "g", 3, true);
+            spawnPiece("n", "d", 2, true);
+            spawnPiece("n", "f", 2, true);
+            spawnPiece("k", "g", 2, true);
+            spawnPiece("r", "c", 2, true);
+            spawnPiece("r", "e", 2, true);
+            spawnPiece("c", "h", 1, true);
+
+        } else if (challenge == 7) { //horde
+            //BLACK SIDE
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 8, false);
+            }
+            //BLACK SIDE
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 7, false);
+            }
+            //BLACK SIDE
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 6, false);
+            }
+            //BLACK SIDE
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 5, false);
+            }
+
+            //WHITE SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 2, true);
+            }
+            //rooks
+            spawnPiece("r", "a", 1, true);
+            spawnPiece("r", "h", 1, true);
+            //knights
+            spawnPiece("n", "b", 1, true);
+            spawnPiece("n", "g", 1, true);
+            //bishops
+            spawnPiece("b", "c", 1, true);
+            spawnPiece("b", "f", 1, true);
+            //queen and king
+            spawnPiece("q", "d", 1, true);
+            spawnPiece("k", "e", 1, true);
+        } else if (challenge == 8) { //brine
+            //BLACK SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 7, false);
+            }
+            //rooks
+            spawnPiece("e", "a", 8, false);
+            spawnPiece("e", "h", 8, false);
+            //knights
+            spawnPiece("i", "b", 8, false);
+            spawnPiece("i", "g", 8, false);
+            spawnPiece("k", "e", 8, false);
+
+            //WHITE SIDE
+            //pawns
+            for (String s : Constants.ALPHA) {
+                spawnPiece("p", s, 2, true);
+            }
+            //rooks
+            spawnPiece("r", "a", 1, true);
+            spawnPiece("r", "h", 1, true);
+            //knights
+            spawnPiece("n", "b", 1, true);
+            spawnPiece("n", "g", 1, true);
+            //bishops
+            spawnPiece("b", "c", 1, true);
+            spawnPiece("b", "f", 1, true);
+            //queen and king
+            spawnPiece("q", "d", 1, true);
+            spawnPiece("k", "e", 1, true);
+
+        }
+    }
+    public void setBoard() throws IOException {
         //BLACK SIDE
         //pawns
         for (String s : Constants.ALPHA) {
@@ -171,9 +404,6 @@ public class Board {
         //queen and king
         spawnPiece("q", "d", 1, true);
         spawnPiece("k", "e", 1, true);
-    }
-    public void setBoard() {
-
     }
     public boolean determineInput(String string) throws IOException {
         char[] inputs = string.toCharArray();

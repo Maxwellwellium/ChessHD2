@@ -52,7 +52,6 @@ public class Main extends JFrame{
 
         BufferedImage I_background = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/background.png")));
         BufferedImage I_logo = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/logo.png")));
-        BufferedImage I_bishop = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/bishop.png")));
         BufferedImage trueIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/true.png")));
         BufferedImage falseIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/false.png")));
         // MAJOR UI ELEMENTS
@@ -100,8 +99,6 @@ public class Main extends JFrame{
         JButton pauseQuit_button = new JButton("Quit Game"); //quits application
 
         JButton gameBack_button = new JButton("Settings"); //sends player to pause screen
-        JButton gameGenNew_button = new JButton("Clear Board"); //generates a new blank chess board
-        JButton gameGenReg_button = new JButton("Set Chess Board"); //generates a new regular chess board
 
         JButton gamePlayFlip_button = new JButton(); //flips which side's turn it is
         JButton gameGenFlip_button = new JButton(); //flips which side's pieces are generated
@@ -112,6 +109,35 @@ public class Main extends JFrame{
         JPanel gamePlayFlip_panel = new JPanel(new GridBagLayout());
         JPanel gameGenFlip_panel = new JPanel(new GridBagLayout());
         JLabel gameTurnCounter = new JLabel("Turn 0");
+
+        //board setters
+        JButton gameGenNew_button = new JButton(); //generates a new blank chess board
+        JButton gameGenReg_button = new JButton(); //generates a new regular chess board
+        JButton gameC1_button = new JButton(); //
+        JButton gameC2_button = new JButton(); //
+        JButton gameC3_button = new JButton(); //
+        JButton gameC4_button = new JButton(); //
+        JButton gameC5_button = new JButton(); //
+        JButton gameC6_button = new JButton(); //
+        JButton gameC7_button = new JButton(); //
+        JButton gameC8_button = new JButton(); //
+
+        JLabel gameGenNew_label = new JLabel("Clear"); //
+        JLabel gameGenReg_label = new JLabel("Chess"); //
+        JLabel gameC1_label = new JLabel("16 Pawns"); //
+        JLabel gameC2_label = new JLabel("Skirmish"); //
+        JLabel gameC3_label = new JLabel("Pawn Endgame"); //
+        JLabel gameC4_label = new JLabel("Corner Rook"); //
+        JLabel gameC5_label = new JLabel("Camel Eater"); //
+        JLabel gameC6_label = new JLabel("Sittuyin"); //
+        JLabel gameC7_label = new JLabel("Horde"); //
+        JLabel gameC8_label = new JLabel("Brine"); //
+
+        JPanel gameNewReg_panel = new JPanel(new GridBagLayout());
+        JPanel game12_panel = new JPanel(new GridBagLayout());
+        JPanel game34_panel = new JPanel(new GridBagLayout());
+        JPanel game56_panel = new JPanel(new GridBagLayout());
+        JPanel game78_panel = new JPanel(new GridBagLayout());
 
         gamePlayFlip_button.addActionListener(new ActionListener() {
             @Override
@@ -192,8 +218,53 @@ public class Main extends JFrame{
         gamePlayFlip_panel.setBackground(Constants.BLACK); //override universal color
         gameGenFlip_panel.setBackground(Constants.BLACK); //override universal color
         universalButtonSetup(gameEnterPiece, gameButtons);
-        universalButtonSetup(gameGenNew_button, gameButtons);
-        universalButtonSetup(gameGenReg_button, gameButtons);
+        //universalButtonSetup(gameGenNew_button, gameButtons);
+        //universalButtonSetup(gameGenReg_button, gameButtons);
+
+        challengeButtonSetup(gameGenNew_button, gameGenNew_label, gameGenReg_button, gameGenReg_label, gameNewReg_panel);
+        challengeButtonSetup(gameC1_button, gameC1_label, gameC2_button, gameC2_label, game12_panel);
+        challengeButtonSetup(gameC3_button, gameC3_label, gameC4_button, gameC4_label, game34_panel);
+        challengeButtonSetup(gameC5_button, gameC5_label, gameC6_button, gameC6_label, game56_panel);
+        challengeButtonSetup(gameC7_button, gameC7_label, gameC8_button, gameC8_label, game78_panel);
+        challengeButtonSetup(gameNewReg_panel, gameButtons);
+        challengeButtonSetup(game12_panel, gameButtons);
+        challengeButtonSetup(game34_panel, gameButtons);
+        challengeButtonSetup(game56_panel, gameButtons);
+        challengeButtonSetup(game78_panel, gameButtons);
+
+        JButton[] challengelist = new JButton[8];
+        challengelist[0] = gameC1_button;
+        challengelist[1] = gameC2_button;
+        challengelist[2] = gameC3_button;
+        challengelist[3] = gameC4_button;
+        challengelist[4] = gameC5_button;
+        challengelist[5] = gameC6_button;
+        challengelist[6] = gameC7_button;
+        challengelist[7] = gameC8_button;
+        int x = 0;
+
+        for (JButton button : challengelist) {
+            x += 1;
+            int finalX = x;
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Play Sound
+                    try {
+                        soundPlayer.playSound("Assets/menuSwitch.wav", false);
+                    } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    System.out.println("beginning challenge: " + finalX);
+                    try {
+                        board.setBoard(finalX);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+        }
+
         universalButtonSetup(gameBack_button, gameButtons);
 
         addChangeListener(gameEnterPiece, e -> {
@@ -375,7 +446,7 @@ public class Main extends JFrame{
                     throw new RuntimeException(ex);
                 }
                 try {
-                    board.setBoard(true);
+                    board.setBoard(0);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -491,6 +562,70 @@ public class Main extends JFrame{
         constraint.gridy = 0; //button placement aligned underneath previous button
         constraint.insets = new Insets(15, 15, 0, 0); //padding between button
         panel.add(label, constraint); //adds button to panel
+    }
+
+    public void challengeButtonSetup(JButton button1, JLabel label1, JButton button2, JLabel label2, JPanel panel) throws IOException {
+        BufferedImage challengeIMG = ImageIO.read(Objects.requireNonNull(getClass().getResource("/Assets/challengeButton.png")));
+        button1.setBackground(Constants.BLACK); //sets button background color
+        button1.setForeground(Constants.WHITE); //set button font color
+        button1.setMinimumSize(new Dimension(30, 20));
+        button1.setMaximumSize(new Dimension(30, 20));
+        button1.setPreferredSize(new Dimension(30, 20)); //sets button size
+        button1.setBorderPainted(false);
+        button1.setFocusPainted(false);
+        button1.setContentAreaFilled(false);
+        button1.setIconTextGap(0);
+        button1.setIcon(new ImageIcon(challengeIMG));
+
+        button2.setBackground(Constants.BLACK); //sets button background color
+        button2.setForeground(Constants.WHITE); //set button font color
+        button2.setMinimumSize(new Dimension(30, 20));
+        button2.setMaximumSize(new Dimension(30, 20));
+        button2.setPreferredSize(new Dimension(30, 20)); //sets button size
+        button2.setBorderPainted(false);
+        button2.setFocusPainted(false);
+        button2.setContentAreaFilled(false);
+        button2.setIconTextGap(0);
+        button2.setIcon(new ImageIcon(challengeIMG));
+
+        //sets button placement constraints within button JPanel
+        GridBagConstraints constraint = new GridBagConstraints();
+        constraint.gridx = GridBagConstraints.RELATIVE; //button placement aligned with leftmost column
+        constraint.gridy = 0; //button placement aligned underneath previous button
+        constraint.insets = new Insets(10, 15, 10, 0); //padding between button
+
+        panel.add(button1, constraint); //adds button to panel
+        panel.add(label1, challengeButtonSetup(label1));
+        panel.add(button2, constraint); //adds button to panel
+        panel.add(label2, challengeButtonSetup(label2));
+    }
+    public GridBagConstraints challengeButtonSetup(JLabel label) {
+        label.setBackground(Constants.BLACK); //sets button background color
+        label.setForeground(Constants.WHITE); //set button font color
+        label.setMinimumSize(new Dimension(110, 40));
+        label.setMaximumSize(new Dimension(110, 40));
+        label.setPreferredSize(new Dimension(110, 40)); //sets button size
+        label.setFont(new Font("Constantia", Font.BOLD, 20)); //sets button font
+
+        //sets button placement constraints within button JPanel
+        GridBagConstraints constraint = new GridBagConstraints();
+        constraint.gridx = GridBagConstraints.RELATIVE; //button placement aligned with leftmost column
+        constraint.gridy = 0; //button placement aligned underneath previous button
+        constraint.insets = new Insets(15, 8, 0, 0); //padding between button
+        return constraint;
+    }
+    public void challengeButtonSetup(JPanel panel, JPanel game) {
+        panel.setBackground(Constants.BLACK); //sets button background color
+        panel.setForeground(Constants.WHITE); //set button font color
+        panel.setMinimumSize(new Dimension(350, 40));
+        panel.setMaximumSize(new Dimension(350, 40));
+        panel.setPreferredSize(new Dimension(350, 40)); //sets button size
+        //sets button placement constraints within button JPanel
+        GridBagConstraints constraint = new GridBagConstraints();
+        constraint.gridx = 0; //button placement aligned with leftmost column
+        constraint.gridy = GridBagConstraints.RELATIVE; //button placement aligned underneath previous button
+        constraint.insets = new Insets(10, 0, 0, 0); //padding between button
+        game.add(panel, constraint); //adds button to panel
     }
     //addChangeListener made by Boann @ Stackoverflow (https://stackoverflow.com/questions/3953208/value-change-listener-to-jtextfield)
     public static void addChangeListener(JTextField text, ChangeListener changeListener) {
