@@ -218,8 +218,6 @@ public class Main extends JFrame{
         gamePlayFlip_panel.setBackground(Constants.BLACK); //override universal color
         gameGenFlip_panel.setBackground(Constants.BLACK); //override universal color
         universalButtonSetup(gameEnterPiece, gameButtons);
-        //universalButtonSetup(gameGenNew_button, gameButtons);
-        //universalButtonSetup(gameGenReg_button, gameButtons);
 
         challengeButtonSetup(gameGenNew_button, gameGenNew_label, gameGenReg_button, gameGenReg_label, gameNewReg_panel);
         challengeButtonSetup(gameC1_button, gameC1_label, gameC2_button, gameC2_label, game12_panel);

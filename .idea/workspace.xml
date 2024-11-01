@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4e43521b-2b3f-44a0-b054-9a7e3997e8b4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2egk3Tf7itDYLFpLIRZG01oHErI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/bagel/Downloads/commons-lang3-3.14.0&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/bagel/IdeaProjects/final/src/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\bagel\IdeaProjects\final\src\Assets" />
+      <recent name="C:\Users\bagel\IdeaProjects\final\src\Assets\Pieces\White" />
+      <recent name="C:\Users\bagel\IdeaProjects\final\src\Assets\Pieces\Black" />
+      <recent name="C:\Users\bagel\IdeaProjects\final\src" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-f644763e9732-c0c073db" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4e43521b-2b3f-44a0-b054-9a7e3997e8b4" name="Changes" comment="" />
+      <created>1712333416479</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1712333416479</updated>
+      <workItem from="1712333417692" duration="1897000" />
+      <workItem from="1712849777766" duration="24735000" />
+      <workItem from="1712902787781" duration="13146000" />
+      <workItem from="1713111613336" duration="623000" />
+      <workItem from="1713113839151" duration="25610000" />
+      <workItem from="1713161352923" duration="634000" />
+      <workItem from="1713162449469" duration="8395000" />
+      <workItem from="1713228914341" duration="53759000" />
+      <workItem from="1713472063380" duration="5617000" />
+      <workItem from="1713488006713" duration="23646000" />
+      <workItem from="1713560642063" duration="31572000" />
+      <workItem from="1713628194971" duration="247000" />
+      <workItem from="1713628658760" duration="22227000" />
+      <workItem from="1713757229404" duration="672000" />
+      <workItem from="1713760916878" duration="560000" />
+      <workItem from="1713915389646" duration="39722000" />
+      <workItem from="1714149943568" duration="4509000" />
+      <workItem from="1714252047808" duration="362000" />
+      <workItem from="1714439752856" duration="379000" />
+      <workItem from="1714597139996" duration="1191000" />
+      <workItem from="1714672704776" duration="816000" />
+      <workItem from="1722032480805" duration="1118000" />
+      <workItem from="1726164665343" duration="286000" />
+      <workItem from="1726253650742" duration="847000" />
+      <workItem from="1730477200138" duration="1241000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
